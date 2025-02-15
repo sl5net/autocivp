@@ -254,6 +254,11 @@ and taka a long in your user.cfg
 | Ctrl + A             | select Arsenal, ArmyCamp, Assembly, AmphitheaterPompeii, Apadana, Arch     |                |
 | Ctrl + D             | select Dock, Defense_tower , Dog     |                |
 | Ctrl + L             | select Library     |                |
+
+### select Actors
+
+| intuitive hotkeys    | Action               | non intuitive hotkeys |
+| :------------------- | :------------------- | :------------------- |
 | Alt + W              | select woman         | Alt + A                |
 | Alt + I              | select infantry      |                      |
 | Alt + P              | select Pikeman, Spearman, Fanatic |                |
