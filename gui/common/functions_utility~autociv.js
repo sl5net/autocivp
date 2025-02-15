@@ -1597,10 +1597,10 @@ function captionCheck_is_communityModToggle_OR_mainlandTwilightToggle_optional_r
     }
 
     if(captiontrim == "kateModToggle" || captiontrim == "kateToggle"){
-      if(enabledmods.indexOf("kate-overhaul") == -1)
-        enabledmods += ' kate-overhaul'
+      if(enabledmods.indexOf("kate ") == -1)
+        enabledmods += ' kate '
       else
-        enabledmods = enabledmods.replace(/\s*\bkate-overhaul\b\s*/, " ")
+        enabledmods = enabledmods.replace(/\s*\bkate\b\s*/, " ")
     }
 
     ConfigDB_CreateAndSaveValueA26A27("user", "mod.enabledmods", enabledmods.trim())
