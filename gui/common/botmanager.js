@@ -522,12 +522,11 @@ Period: .
 					p_textBeforeTemp = text
 
 					g_chatTextInInputFild_when_msgCommand += `${text}\n`
-					bugIt = true &&  g_selfNick.includes("seeh")
+					bugIt = false &&  g_selfNick.includes("seeh")
 					if(bugIt){
 						warn(`bootmanager.js:527 text: ${text}  , textBefore: ${p_textBeforeTemp}`)
 					}
 
-					warn(`bootmanager.js:527 text: ${text}  , textBefore: ${p_textBeforeTemp}`)
 
 
 					// g_chatTextInInputFild_when_msgCommand += `${text2}\n`
