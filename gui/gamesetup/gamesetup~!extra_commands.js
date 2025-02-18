@@ -316,6 +316,17 @@ g_NetworkCommands["/pRestoreLastProfile"] = () => {
 g_NetworkCommands["/p0_75popMax"] = () => p0_75popMax_Mainland();
 g_NetworkCommands["/pMainland_1v1_defaults"] = () => pMainland_1v1_defaults();
 g_NetworkCommands["/pMainland_2v2_defaults"] = () => pMainland_defaults(2);
+g_NetworkCommands["/p2v2"] = () => pMainland_defaults(2);
+g_NetworkCommands["/p3v3"] = () => pMainland_defaults(3);
+g_NetworkCommands["/p4v4"] = () => pMainland_defaults(4);
+g_NetworkCommands["/1"] = () => pMainland_defaults(2);
+g_NetworkCommands["/2"] = () => pMainland_defaults(2);
+g_NetworkCommands["/3"] = () => pMainland_defaults(3);
+g_NetworkCommands["/6"] = () => pMainland_defaults(3);
+g_NetworkCommands["/4"] = () => pMainland_defaults(4);
+g_NetworkCommands["/5"] = () => pMainland_defaults(4);
+g_NetworkCommands["/7"] = () => pMainland_defaults(4);
+
 g_NetworkCommands["/pUnknown_defaults"] = () => pUnknown();
 g_NetworkCommands["/pPolarSeaTheWolfesMap"] = () => pPolarSeaTheWolfesMap();
 
