@@ -499,8 +499,8 @@ function setTeams(text) {
   let teams = text.match(/(\d+)/g);
   if (!teams) return selfMessage("Invalid input for teams.");
 
-  // If a 'v' is present without a second number, duplicate the first number
-  if (text.indexOf("v") > 0 && !teams[1]) teams[1] = teams[0];
+  // If a number is present without a second number, duplicate the first number
+  if (!teams[1]) teams[1] = teams[0];
 
   teams = teams.map(Number).filter(v => v !== 0);
   if (teams.length < 1 || teams.length > 4)
