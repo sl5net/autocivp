@@ -343,7 +343,7 @@ g_NetworkCommands["/randomCivs"] = function (excludedCivs) {
   excludeList.forEach(civ => civList.delete(civ));
   civList = Array.from(civList);
   const getRandIndex = () => Math.floor(Math.random() * civList.length);
-  for (let slot = 1; slot <= game.get.numberOfSlots(); slot++) {
+  for (let slot = 1; slot <= game.get.numberOfSlots(); ++slot) {
     const playerCivCode = civList[getRandIndex()][1];
     let civCodeIndex = Object.keys(g_CivData).indexOf(playerCivCode);
     if (civCodeIndex === -1) return;
