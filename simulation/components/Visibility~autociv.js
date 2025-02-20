@@ -1,10 +1,15 @@
 if (!Visibility.prototype.OnDestroy)
     Visibility.prototype.OnDestroy = function () { };
 
+let cmpGUIInterface = Engine.QueryInterface(SYSTEM_ENTITY, IID_GuiInterface);
 autociv_patchApplyN(Visibility.prototype, "OnDestroy", function (target, that, args)
 {
-    let cmpGUIInterface = Engine.QueryInterface(SYSTEM_ENTITY, IID_GuiInterface);
-    cmpGUIInterface.autociv.corpse.entities.delete(that.entity);
+    if (cmpGUIInterface && cmpGUIInterface.autociv && cmpGUIInterface.autociv.corpse && cmpGUIInterface.autociv.corpse.entities) {
+        console.log("Removing entity " + that.entity + " from corpse list.");
+        cmpGUIInterface.autociv.corpse.entities.delete(that.entity);
+    } else {
+        console.log("Warning: Unable to remove entity " + that.entity + " from corpse list.");
+    }
     return target.apply(that, args);
 })
 
