@@ -8,13 +8,14 @@ var g_gameMapMapPrevious = null; // For debugging map errors
 var game = {
   // Dynamic attributes that update after GUI changes
   attributes: {},
-  
+
   // Trick to force network update: temporarily increment player count
   updateSettings() {
     const playerCountBackup = g_GameSettings.playerCount.nbPlayers;
-    if (playerCountBackup < 9) {
+    if (playerCountBackup < 8) {
       const tempCount = playerCountBackup + 1;
       try {
+        print('gui/gamesetup/gamesetup~!extra_commands.js:18')
         g_GameSettings.playerCount.nbPlayers = tempCount;
       } catch (error) {
         // Suppress error if next player's settings are undefined
@@ -560,7 +561,7 @@ function setMapTypeFilterNameBiome(name, biome, type = "random", filter = "defau
 function setDefaultsforPopmaxAlliedviewRatingTreasuresNomadExploration(sendMessageToAll = true) {
   g_GameSettings.mapExploration.allied = true;
   if (sendMessageToAll) sendMessage('AlliedView enabled');
-  
+
   const ratedDefault = Engine.ConfigDB_GetValue("user", "autocivP.gamesetup.ratedDefault");
   g_GameSettings.rating.enabled = ratedDefault === 'true';
   if (sendMessageToAll) sendMessage(`Rating = ${ratedDefault}`);
