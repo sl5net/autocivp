@@ -1594,7 +1594,8 @@ function captionCheck_is_communityModToggle_OR_mainlandTwilightToggle_optional_r
     }
 
     ConfigDB_CreateAndSaveValueA26A27("user", "mod.enabledmods", enabledmods.trim())
-    selfMessage(`enabledmods = ${enabledmods}`);
+    selfMessage(`enabledmods = ${enabledmods}`)
+    print(`functions_utility~autociv.js:1598 saved: enabledmods = ${enabledmods}`)
 
 
     const clean_array = enabledmods.trim().split(/\s+/);

@@ -186,7 +186,6 @@ var g_autociv_countdown = {
           "user",
           "mod.enabledmods")
 
-
         print(`gamesetup~autociv.js:203 numberOfSlots()>7 do auto_enable_wehen_join_8_players_game ${error}`)
 
         if (enabledmods.indexOf("kate") == -1)
@@ -216,7 +215,7 @@ var g_autociv_countdown = {
         const enabledmods = Engine.ConfigDB_GetValue(
           "user",
           "mod.enabledmods")
-        if (enabledmods.indexOf("kate-overhaul") == -1)
+        if (enabledmods.indexOf("kate") == -1)
           captionCheck_is_communityModToggle_OR_mainlandTwilightToggle_optional_restartOad("kateModToggle", true)
       }
     }
