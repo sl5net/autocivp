@@ -103,7 +103,7 @@ autociv_patchApplyN("init", function (target, that, args) {
       // Asynchronous operation
       try {
         g_selfIsHost_temp = isSelfHost()
-        // setCaption_when_JoinOrStart_Setup_suggestRestoreMods_when_modsChanged()
+        setCaption_when_JoinOrStart_Setup_suggestRestoreMods_when_modsChanged()
         // mybe not works anymore.... let it out
       } catch (error) {
         // Handle the error gracefully or simply ignore it
@@ -219,8 +219,8 @@ function setCaption_when_JoinOrStart_Setup_suggestRestoreMods_when_modsChanged()
       print(`gui/gamesetup/gamesetup~autociv.js:225`)
 
       // your not host
-      // if(doHelloAutomaticSuggestionWhenJoinAgameSetup)
-      // newCaptionString = 'hi all (◕‿◕)'
+      if (doHelloAutomaticSuggestionWhenJoinAgameSetup)
+        newCaptionString = 'hi all (◕‿◕)'
 
 
       let countPlayers = 0
@@ -266,7 +266,7 @@ function setCaption_when_JoinOrStart_Setup_suggestRestoreMods_when_modsChanged()
 
         newCaptionString += randomg_seeh_greet + '';
 
-        // newCaptionString += ' i ♡ autocivP♇ mod .'
+        newCaptionString += ' i ♡ autocivP♇ mod .'
 
         print('gui/gamesetup/gamesetup~autociv.js:263')
         ConfigDB_CreateAndSaveValueA26A27("user", `AudioTTS.speak`, randomg_seeh_greet);
@@ -279,9 +279,9 @@ function setCaption_when_JoinOrStart_Setup_suggestRestoreMods_when_modsChanged()
         // maybe this has produced a crash when join a large 8 player team gam not already started.
         // seems so. so comment it out 2025-02-21
 
-        // const chatInput = Engine.GetGUIObjectByName("chatInput")
-        // chatInput.caption = newCaptionString
-        // chatInput.buffer_position = newBufferPosition
+        const chatInput = Engine.GetGUIObjectByName("chatInput")
+        chatInput.caption = newCaptionString
+        chatInput.buffer_position = newBufferPosition
 
       } catch (error) {
         print(`Error: gui/gamesetup/gamesetup~autociv.js:225 ${error}`)
@@ -384,8 +384,8 @@ function setCaption_when_JoinOrStart_Setup_suggestRestoreMods_when_modsChanged()
 
       // maybe this has produced a crash when join a large 8 player team gam not already started.
       // seems so. so comment it out 2025-02-21
-      //      const chatInput = Engine.GetGUIObjectByName("chatInput")
-      //      chatInput.caption = newCaptionString
+      const chatInput = Engine.GetGUIObjectByName("chatInput")
+      chatInput.caption = newCaptionString
     } catch (error) {
       print(`gui/gamesetup/gamesetup~autociv.js:396 ${error}`)
     }
