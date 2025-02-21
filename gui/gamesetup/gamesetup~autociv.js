@@ -179,20 +179,24 @@ function setCaption_when_JoinOrStart_Setup_suggestRestoreMods_when_modsChanged()
     selfMessage(`175: modsFromUserCfg=${modsFromUserCfg} , modsFromUserCfg_backup=${modsFromUserCfg_backup}`);
   }
 
-  print('gui/gamesetup/gamesetup~autociv.js:182')
+  print('gui/gamesetup/gamesetup~autociv.js:182\n')
 
   if (modsFromUserCfg != modsFromUserCfg_backup) {
     // const modsFromUserCfg = Engine.ConfigDB_GetValue("user", "mod.enabledmods");
     // const modsFromUserCfg_backup = Engine.ConfigDB_GetValue("user", "autocivP.enabledmods.backup");
-
-    print('gui/gamesetup/gamesetup~autociv.js:188')
-    ConfigDB_CreateAndSaveValueA26A27("user", `autocivP.enabledmods.backup`, modsFromUserCfg);
 
     //   warn('82: have changed enabledmods? do you want restore last profile?');
     // g_NetworkCommands["/pRestoreLastProfile"]();
     // pRestoreLastProfile();
 
     if (g_selfIsHost) {
+
+      print('gui/gamesetup/gamesetup~autociv.js:188\n')
+      try {
+        ConfigDB_CreateAndSaveValueA26A27("user", `autocivP.enabledmods.backup`, modsFromUserCfg);
+      } catch (error) {
+        print("Error: {e.message}")
+      }
       const difference = getDifference(modsFromUserCfg, modsFromUserCfg_backup).trim()
 
       // bugIt = g_selfNick.includes("seeh") // new implementation so i will watch longer
@@ -216,19 +220,29 @@ function setCaption_when_JoinOrStart_Setup_suggestRestoreMods_when_modsChanged()
           warn(`newCaptionString: ${newCaptionString}`);
       }
     } else {
+
+
+      print(`gui/gamesetup/gamesetup~autociv.js:225`)
+
       // your not host
       // if(doHelloAutomaticSuggestionWhenJoinAgameSetup)
       // newCaptionString = 'hi all (◕‿◕)'
 
 
+      let countPlayers = 0
+      try {
+        countPlayers = Object.keys(g_PlayerAssignments).length;
+      } catch (error) {
+        print(`Error: gui/gamesetup/gamesetup~autociv.js:225 ${error}`)
+      }
 
-      const countPlayers = Object.keys(g_PlayerAssignments).length;
       // selfMessage(`countPlayers: ${countPlayers}`);
       // is always 0 first when not waiting
       // dont forget count yourself
       // let hostName = Engine.LobbyGetNick()
       let hostName = ''
       if (countPlayers == 2) {
+        print(`gui/gamesetup/gamesetup~autociv.js:225`)
 
         let firstPlayerGUID = Object.keys(g_PlayerAssignments)[0];
         hostName = g_PlayerAssignments[firstPlayerGUID].name;
@@ -265,9 +279,16 @@ function setCaption_when_JoinOrStart_Setup_suggestRestoreMods_when_modsChanged()
       }
 
 
-      const chatInput = Engine.GetGUIObjectByName("chatInput")
-      chatInput.caption = newCaptionString
-      chatInput.buffer_position = newBufferPosition
+      print('gui/gamesetup/gamesetup~autociv.js:272')
+
+      try {
+        const chatInput = Engine.GetGUIObjectByName("chatInput")
+        chatInput.caption = newCaptionString
+        chatInput.buffer_position = newBufferPosition
+
+      } catch (error) {
+
+      }
 
       if (bugIt)
         warn(`newCaptionString: ${newCaptionString}`);
@@ -363,8 +384,11 @@ function setCaption_when_JoinOrStart_Setup_suggestRestoreMods_when_modsChanged()
     warn(`newCaptionString: ${newCaptionString}`);
 
   if (newCaptionString) {
-    print('gui/gamesetup/gamesetup~autociv.js:366')
-    const chatInput = Engine.GetGUIObjectByName("chatInput")
-    chatInput.caption = newCaptionString
+    try {
+      const chatInput = Engine.GetGUIObjectByName("chatInput")
+      chatInput.caption = newCaptionString
+    } catch (error) {
+      print(`gui/gamesetup/gamesetup~autociv.js:381 ${error}`)
+    }
   }
 }
