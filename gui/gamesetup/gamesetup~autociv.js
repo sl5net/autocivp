@@ -390,8 +390,10 @@ function setCaption_when_JoinOrStart_Setup_suggestRestoreMods_when_modsChanged()
 
   if (newCaptionString) {
     try {
-      const chatInput = Engine.GetGUIObjectByName("chatInput")
-      chatInput.caption = newCaptionString
+      // maybe this has produced a crash when join a large 8 player team gam not already started.
+      // seems so. so comment it out 2025-02-21
+      //      const chatInput = Engine.GetGUIObjectByName("chatInput")
+      //      chatInput.caption = newCaptionString
     } catch (error) {
       print(`gui/gamesetup/gamesetup~autociv.js:381 ${error}`)
     }
