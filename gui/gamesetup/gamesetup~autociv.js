@@ -103,21 +103,15 @@ autociv_patchApplyN("init", function (target, that, args) {
       // Asynchronous operation
       try {
         g_selfIsHost_temp = isSelfHost()
+        // setCaption_when_JoinOrStart_Setup_suggestRestoreMods_when_modsChanged()
+        // mybe not works anymore.... let it out
       } catch (error) {
         // Handle the error gracefully or simply ignore it
         warn(`109: ${error} | gui/gamesetup/gamesetup~autociv.js`);
         warn(`110: gui/gamesetup/gamesetup~autociv.js`);
+        print(`gui/gamesetup/gamesetup~autociv.js:111 ${error}`)
       }
     }, 10);
-
-
-  // obsolete, seems not obsolete, 23-0822
-  if (true)
-    setTimeout(() => {
-      setCaption_when_JoinOrStart_Setup_suggestRestoreMods_when_modsChanged()
-    }, 20);
-  else
-    setCaption_when_JoinOrStart_Setup_suggestRestoreMods_when_modsChanged()
 
 })
 
@@ -383,19 +377,21 @@ function setCaption_when_JoinOrStart_Setup_suggestRestoreMods_when_modsChanged()
     // endOf: mods have not changed
   }
 
-  if (bugIt)
-    warn(`newCaptionString: ${newCaptionString}`);
-
-  print('gui/gamesetup/gamesetup~autociv.js:389')
 
   if (newCaptionString) {
     try {
+      print('gui/gamesetup/gamesetup~autociv.js:389')
+
       // maybe this has produced a crash when join a large 8 player team gam not already started.
       // seems so. so comment it out 2025-02-21
       //      const chatInput = Engine.GetGUIObjectByName("chatInput")
       //      chatInput.caption = newCaptionString
     } catch (error) {
-      print(`gui/gamesetup/gamesetup~autociv.js:381 ${error}`)
+      print(`gui/gamesetup/gamesetup~autociv.js:396 ${error}`)
     }
   }
-}
+  print(`gui/gamesetup/gamesetup~autociv.js:399 `)
+} // endof setCaption_when_JoinOrStart_Setup_suggestRestoreMods_when_modsChanged
+
+
+print(`gui/gamesetup/gamesetup~autociv.js:401 `)
