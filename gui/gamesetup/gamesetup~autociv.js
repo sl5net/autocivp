@@ -279,15 +279,18 @@ function setCaption_when_JoinOrStart_Setup_suggestRestoreMods_when_modsChanged()
       }
 
 
-      print('gui/gamesetup/gamesetup~autociv.js:272')
 
       try {
-        const chatInput = Engine.GetGUIObjectByName("chatInput")
-        chatInput.caption = newCaptionString
-        chatInput.buffer_position = newBufferPosition
+        print('gui/gamesetup/gamesetup~autociv.js:272')
+        // maybe this has produced a crash when join a large 8 player team gam not already started.
+        // seems so. so comment it out 2025-02-21
+
+        // const chatInput = Engine.GetGUIObjectByName("chatInput")
+        // chatInput.caption = newCaptionString
+        // chatInput.buffer_position = newBufferPosition
 
       } catch (error) {
-
+        print(`Error: gui/gamesetup/gamesetup~autociv.js:225 ${error}`)
       }
 
       if (bugIt)
@@ -382,6 +385,8 @@ function setCaption_when_JoinOrStart_Setup_suggestRestoreMods_when_modsChanged()
 
   if (bugIt)
     warn(`newCaptionString: ${newCaptionString}`);
+
+  print('gui/gamesetup/gamesetup~autociv.js:389')
 
   if (newCaptionString) {
     try {
