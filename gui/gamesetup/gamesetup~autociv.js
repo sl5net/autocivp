@@ -1,6 +1,6 @@
 
 
-// warnModIsNotEnabled(); // check for feldmap mod is default 23-0624_0327-45
+warnModIsNotEnabled(); // check for feldmap mod is default 23-0624_0327-45
 
 warnSilhouettesIsNotEnabled()
 
@@ -173,8 +173,6 @@ function setCaption_when_JoinOrStart_Setup_suggestRestoreMods_when_modsChanged()
     selfMessage(`175: modsFromUserCfg=${modsFromUserCfg} , modsFromUserCfg_backup=${modsFromUserCfg_backup}`);
   }
 
-  print('gui/gamesetup/gamesetup~autociv.js:182\n')
-
   if (modsFromUserCfg != modsFromUserCfg_backup) {
     // const modsFromUserCfg = Engine.ConfigDB_GetValue("user", "mod.enabledmods");
     // const modsFromUserCfg_backup = Engine.ConfigDB_GetValue("user", "autocivP.enabledmods.backup");
@@ -185,7 +183,7 @@ function setCaption_when_JoinOrStart_Setup_suggestRestoreMods_when_modsChanged()
 
     if (g_selfIsHost) {
 
-      print('gui/gamesetup/gamesetup~autociv.js:188\n')
+      // print('gui/gamesetup/gamesetup~autociv.js:188\n')
       try {
         ConfigDB_CreateAndSaveValueA26A27("user", `autocivP.enabledmods.backup`, modsFromUserCfg);
       } catch (error) {

@@ -12,10 +12,10 @@ var game = {
   // Trick to force network update: temporarily increment player count
   updateSettings() {
     const playerCountBackup = g_GameSettings.playerCount.nbPlayers;
-    if (playerCountBackup < 8) {
+    if (playerCountBackup < 9) {
       const tempCount = playerCountBackup + 1;
       try {
-        print('gui/gamesetup/gamesetup~!extra_commands.js:18')
+        // print('gui/gamesetup/gamesetup~!extra_commands.js:18')
         g_GameSettings.playerCount.nbPlayers = tempCount;
       } catch (error) {
         // Suppress error if next player's settings are undefined
