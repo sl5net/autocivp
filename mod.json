@@ -1,8 +1,8 @@
 {
   "name": "autocivp",
-  "version": "1.0.72",
+  "version": "1.0.73",
   "label": "autocivp",
-  "url": "https://wildfiregames.com/forum/topic/107371-autociv-add-ons-profiles-jitsi-team-call",
+  "url": "https://github.com/sl5net/autocivp",
   "description": "Features: game profiles",
   "ignoreInCompatibilityChecks": true,
   "dependencies": [
