@@ -235,7 +235,7 @@ g_NetworkCommands["/help"] = (match, sendToAll = false) => {
     if (match && !command.match(filter)) continue;
     found = true;
     const asc = g_autociv_SharedCommands[noSlash];
-    const ncd = g_NetworkCommandsDescriptions[command];
+    const ncd = g_NetworkCommands[command];
     textOut += "\n" + sprintf(translate("%(command)s - %(description)s"), {
       command: "/" + coloredText(noSlash, chatColor),
       description: ncd ?? asc?.description ?? "",
