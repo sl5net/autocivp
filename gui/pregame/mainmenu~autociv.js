@@ -3,7 +3,7 @@ var config = {
   needsToSave: false,
   needsToReloadHotkeys: false,
   set: function (key, value) {
-    Engine.ConfigDB_CreateValue("user", key, value);
+    Engine.ConfigDB_CreateValue("user", key.toString(), value.toString());
     this.needsToSave = true;
     this.needsToReloadHotkeys =
       this.needsToReloadHotkeys || key.startsWith("hotkey.");
