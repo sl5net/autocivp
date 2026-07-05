@@ -41,7 +41,7 @@ class Autociv_CLI
 
 			while (true)
 			{
-				let object = Engine.GetGUIObjectByName(`__internal(${internal})`)
+				let object = Engine.TryGetGUIObjectByName(`__internal(${internal})`)
 				if (!object)
 					break
 

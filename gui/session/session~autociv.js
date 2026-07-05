@@ -23,7 +23,7 @@ function autociv_initBots()
 }
 function autociv_addVersionLabel()
 {
-	let label = Engine.GetGUIObjectByName("buildTimeLabel");
+	let label = Engine.TryGetGUIObjectByName("buildTimeLabel");
 	if (!label?.caption)
 		return;
 
@@ -34,22 +34,22 @@ function autociv_addVersionLabel()
 
 function autociv_patchSession()
 {
-	Engine.GetGUIObjectByName("pauseOverlay").size = "0% 0% 100% 30%"
+	Engine.TryGetGUIObjectByName("pauseOverlay").size = "0% 0% 100% 30%"
 }
 
 function autociv_SetChatTextFromConfig()
 {
 	const that = autociv_SetChatTextFromConfig
-	that.default_size = that.default_size ?? Engine.GetGUIObjectByName("chatPanel").size
-	that.default_font = that.default_font ?? Engine.GetGUIObjectByName("chatLines").children[0].font
+	that.default_size = that.default_size ?? Engine.TryGetGUIObjectByName("chatPanel").size
+	that.default_font = that.default_font ?? Engine.TryGetGUIObjectByName("chatLines").children[0].font
 
 	const changeSize = Engine.ConfigDB_GetValue("user", "autociv.session.chatPanel.size.change") == "true"
 	const size = changeSize ? Engine.ConfigDB_GetValue("user", "autociv.session.chatPanel.size") : that.default_size
-	Engine.GetGUIObjectByName("chatPanel").size = size
+	Engine.TryGetGUIObjectByName("chatPanel").size = size
 
 	const changeFont = Engine.ConfigDB_GetValue("user", "autociv.session.chatText.font.change") == "true"
 	const font = changeFont ? Engine.ConfigDB_GetValue("user", "autociv.session.chatText.font") : that.default_font
-	for (let child of Engine.GetGUIObjectByName("chatLines").children)
+	for (let child of Engine.TryGetGUIObjectByName("chatLines").children)
 		child.font = font
 }
 
@@ -71,7 +71,7 @@ function getGuiObjectsWithHotkey()
 
 	while (true)
 	{
-		let object = Engine.GetGUIObjectByName(`__internal(${internal})`)
+		let object = Engine.TryGetGUIObjectByName(`__internal(${internal})`)
 		if (!object)
 			break
 
@@ -116,7 +116,7 @@ function autociv_changeSomeHotkeysToKeyDownAsPressTypeCantBeDiscardedFromBeingCa
 		// fix the autociv and autocivP problem with changing chat context via hotkey. it saves last chat context temporarily and put it in again when you press tab in empty chat 23-0724_1543-57
 
 		Engine.SetGlobalHotkey("chat", "KeyDown", () => {
-			const chatInput = Engine.GetGUIObjectByName("chatInput")
+			const chatInput = Engine.TryGetGUIObjectByName("chatInput")
 			if(chatInput?.caption && chatInput.caption.length > 0){
 				selfMessage(`:) getting your chat "${chatInput.caption}" by press ⟦Tab⟧ later`);
 				g_chat_draft = chatInput.caption
@@ -129,7 +129,7 @@ function autociv_changeSomeHotkeysToKeyDownAsPressTypeCantBeDiscardedFromBeingCa
 		// Engine.SetGlobalHotkey("chat", "KeyDown",  that.openPage.bind(that) );
 
 		Engine.SetGlobalHotkey("chat", "KeyDown", () => {
-			const chatInput = Engine.GetGUIObjectByName("chatInput")
+			const chatInput = Engine.TryGetGUIObjectByName("chatInput")
 			if(chatInput?.caption && chatInput.caption.length > 0){
 				selfMessage(`:) getting your chat "${chatInput.caption}" by press ⟦Tab⟧ later`);
 

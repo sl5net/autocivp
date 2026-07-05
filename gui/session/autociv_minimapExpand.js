@@ -14,7 +14,7 @@ var autociv_minimapExpand = {
 		}
 		else
 		{
-			let windowSize = Engine.GetGUIObjectByName("session").getComputedSize();
+			let windowSize = Engine.TryGetGUIObjectByName("session").getComputedSize();
 			let halfHeight = (windowSize.bottom - windowSize.top) / 2 - 70;
 
 			let sizeParent = `50% 50% 50% 50%`;
@@ -30,7 +30,7 @@ var autociv_minimapExpand = {
 	get GUI()
 	{
 		return "_GUIObject" in this ? this._GUIObject :
-			this._GUIObject = Engine.GetGUIObjectByName("minimapPanel");
+			this._GUIObject = Engine.TryGetGUIObjectByName("minimapPanel");
 	},
 	get GUIParent() { return this.GUI.parent }
 };

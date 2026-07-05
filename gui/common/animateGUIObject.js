@@ -223,7 +223,7 @@ class AnimateGUIObject
 function GUIObjectSet(object, settings)
 {
 	let values = AnimateGUIObject.getValues(settings)
-	const GUIObject = typeof object == "string" ? Engine.GetGUIObjectByName(object) : object
+	const GUIObject = typeof object == "string" ? Engine.TryGetGUIObjectByName(object) : object
 	AnimateGUIObject.setValues(values, GUIObject)
 
 	return GUIObject

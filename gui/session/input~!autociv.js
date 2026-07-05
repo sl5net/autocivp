@@ -137,7 +137,7 @@ function autociv_showBuildingPlacementTerrainSnap(mousePosX, mousePosY)
 function autociv_placeBuildingByTemplateName(templateName)
 {
 	// Hack: fast check
-	if (Engine.GetGUIObjectByName("unitConstructionPanel").hidden)
+	if (Engine.TryGetGUIObjectByName("unitConstructionPanel").hidden)
 		return;
 
 	const cycleTemplates = Engine.ConfigDB_GetValue("user", "autociv.session.building.place." + templateName).match(/[^\W]+/g)
@@ -193,14 +193,14 @@ autociv_placeBuildingByTemplateName.buttons = new Proxy({}, {
 	{
 		return key in target ?
 			target[key] :
-			target[key] = Engine.GetGUIObjectByName(`unitConstructionButton[${key}]`);
+			target[key] = Engine.TryGetGUIObjectByName(`unitConstructionButton[${key}]`);
 	}
 })
 
 function autociv_clearSelectedProductionQueues()
 {
 	// Hack: fast check
-	if (Engine.GetGUIObjectByName("unitQueuePanel").hidden)
+	if (Engine.TryGetGUIObjectByName("unitQueuePanel").hidden)
 		return;
 
 	g_Selection.toList().map(GetEntityState).forEach(entity =>

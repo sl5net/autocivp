@@ -75,7 +75,7 @@ class AnimateGUIManager
  */
 function animate(object)
 {
-	let GUIObject = typeof object == "string" ? Engine.GetGUIObjectByName(object) : object
+	let GUIObject = typeof object == "string" ? Engine.TryGetGUIObjectByName(object) : object
 	return animate.instance.get(GUIObject)
 }
 

@@ -14,7 +14,7 @@ class ResizeBar
 
 	static get bar()
 	{
-		return ResizeBar._bar ?? (ResizeBar._bar = Engine.GetGUIObjectByName("glResizeBar"))
+		return ResizeBar._bar ?? (ResizeBar._bar = Engine.TryGetGUIObjectByName("glResizeBar"))
 	}
 
 	static mouse = {
@@ -37,7 +37,7 @@ class ResizeBar
 
 	parseObject(object)
 	{
-		return typeof object == "string" ? Engine.GetGUIObjectByName(object) : object
+		return typeof object == "string" ? Engine.TryGetGUIObjectByName(object) : object
 	}
 
 	isMouseInside()
@@ -239,14 +239,14 @@ class ResizeBar
  * Example: (lobby.js)
  *
  * g_resizeBarManager.add(
- *	Engine.GetGUIObjectByName("chatPanel"),
+ *	Engine.TryGetGUIObjectByName("chatPanel"),
  *	"left",
  *	20,
  *	[
- *		[Engine.GetGUIObjectByName("profilePanel"), "right"],
- *		[Engine.GetGUIObjectByName("leftButtonPanel"), "right"],
+ *		[Engine.TryGetGUIObjectByName("profilePanel"), "right"],
+ *		[Engine.TryGetGUIObjectByName("leftButtonPanel"), "right"],
  *	],
- *	() => !Engine.GetGUIObjectByName("profilePanel").hidden,
+ *	() => !Engine.TryGetGUIObjectByName("profilePanel").hidden,
  *	() => warn("chatPanel resized")
  * )
  *
