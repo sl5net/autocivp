@@ -11,44 +11,46 @@ Thanks to all the 0 A.D. players who found it useful.
  	- type <tab><tab> to see available commands that you have already used (history is saved into user.cfg).
 	- some other little commands that works like: type command<tab>
 
-- Wider Array of chat commands
-- Jitsi  (Voice Chat)
-	- it makes sure that all team members use the same jitsi-chat
-- map-profiles ( https://wildfiregames.com/forum/uploads/monthly_2023_07/Screenshot_20230725_150411.jpg.a954e52a74bb8dd0400c20e205933b61.jpg )
-- mod-profiles ( https://youtu.be/pt3VGm4N_Cw )
-  - restart automatically when mod-profiles has changed: https://www.youtube.com/watch?v=cDZc-m2_mCY
-  - and More...
-- prettyToggle: quick/easy during the game: Lower Graphics <-> Greater Graphics
-- prettyEnable: Enables enhanced graphics settings (high textures, shadows, antialiasing) for improved visuals, best used on capable machines for replays or smaller games.
-- prettyDisable: Disables enhanced graphics settings to boost performance in large games or on lower-end machines, reducing lag with lower textures and disabled shadows.
-	- Option to automatically limit some grafics for large games.
-- communityModToggle - quick/easy not possible during the game
-- listIcons - command: use Symbols for some mod (not all are optional)
-- Auto-save Drafts in Chat: Never Lose Your Message Again! when you use hotkey for toggle beetween allies-room to all-room content or back. This feature ensures that the content of a chat message is not lost if it has not been sent yet. Instead, the content is saved and can be retrieved even if the user navigates away from the chat screen before sending the message. This can be useful to prevent users from losing their work in progress.
-- setup all defaults by type into the chat:
- feature value
-- Tab-Commands (tab key and it will give you fuzzy-search hints, even if you missspell a command):
-  - TogglComunityMod - Command ( https://youtu.be/pt3VGm4N_Cw?si=KHH670bJdief61i6&t=465 )
-  - `food/wood/stone... please` ( https://youtu.be/rofNXCZzLDM?si=ijxsv4hfKQNuUFyQ&t=353 ) . Quickly request resources by typing `wood` or `wd`. This will insert `99 wood please ♣` into the chat with the cursor right before `99`. You can then easily change the amount. For example, typing `1` will change it to `199 wood please ♣`.
 
+	
 
-## Planned Features
+## Hands-Free & Accessibility Features
 
-- change the polar_sea time slices to other minues (e.g. from 15 to 5 Minutes)
-- maybe rename it this mod to ProCommandLine with Symbold ♇ (PLine)
-- maybe move it to gitlab
+This mod includes a suite of advanced accessibility features designed to enable fully hands-free, vocal-control gameplay (integrated with [SL5 Aura](https://github.com/sl5net/SL5-aura-service)). These additions solve major real-time strategy (RTS) accessibility barriers, such as precise mouse coordinate navigation, target-clicking, and camera panning.
 
-## Limitations
+These features run natively on the user-interface (GUI) side, ensuring complete stability and compatibility with other interface modifications.
 
-There is a limitation in the game where replays are not saved when you are the host of a team or 1v1 game. However, replays are saved when you join and play 1v1 games or team games.
+### Key Features
 
-but no problem if you use from the newer releases :
+#### 1. Single-Key Town Alert Toggle (Vocal Command: "Alarm / Entwarnung")
+* **Key:** `ö` (keysym `246`)
+* **How it works:** Instead of forcing the player to manually select a Civil Centre and click the "Raise Alert" button, pressing this hotkey instantly toggles the alert state across all own Civil Centres on the map. The player's active unit selection remains completely unaffected.
 
-...noMpJS... .zip
+#### 2. Multi-Tap Resource Gathering (Vocal Command: "Holz / Beeren / Fleisch")
+* **Key:** `+` (keysym `43` - customizable)
+* **How it works:** This feature implements a multi-tap (click-counting) system on a single hotkey to assign selected gatherers to the nearest resources without using a mouse. When selected workers are active:
+  * **1x Tap:** Finds the nearest tree within 150m and commands them to gather **Wood**.
+  * **2x Taps:** Finds the nearest fruit bush within 150m and commands them to gather **Fruit/Berries**.
+  * **3x Taps:** Finds the nearest wild animal within 150m and commands them to hunt **Meat**.
 
-## Questions & feedback
-For more information, questions and feedback, visit the thread on the [0 A.D. forum](https://wildfiregames.com/forum/topic/107371-autociv-add-ons-profiles-jitsi-team-call).
-Best place for post issues here: https://github.com/sl5net/autocivP/issues/
+#### 3. Relative Directional Unit Navigation (Vocal Command: "North / South / East / West / ...")
+* **Keys:** Numpad `1` to `9` (keysyms `1073741913` to `1073741921`)
+* **How it works:** Moves selected units in 100-meter steps relative to their current average position in any of the 8 compass directions. It uses a mathematical diagonal-offset scaling (0.707) to ensure uniform step sizes in all directions. No screen coordinates or clicks are required.
+
+#### 4. Screen-Space Relative Camera Navigation (Vocal Command: "Camera North / ...")
+* **Keys:** `Alt` (keysym `1073742050`) + Arrow Keys
+* **How it works:** Moves the camera in large 100-meter jumps. It calculates the camera's ground focal point via `Engine.GetCameraPivot()` and its rotation yaw via `Engine.GetCameraRotation()`. By applying a 2D rotation matrix with an inverted yaw angle, arrow key panning directions remain perfectly aligned with screen-space (e.g., pressing Up always pans the camera straight up), regardless of the camera's current rotation angle.
+
+---
+
+### Voice Control & SL5 Aura Integration
+
+These shortcuts are mapped to be seamlessly controlled via spoken commands using the SL5 Aura vocal service. You can find the corresponding open-source configurations and voice plugins here:
+
+* [0 A.D. SL5 Aura Configuration](https://github.com/sl5net/SL5-aura-service/tree/master/config/maps/plugins/game/0ad)
+* [0 A.D. (Secondary Layout) SL5 Aura Configuration](https://github.com/sl5net/SL5-aura-service/tree/master/config/maps/plugins/game/0ad2)
+
+	
 
 # autoCivP and AutoCiv
 ## autoCivP

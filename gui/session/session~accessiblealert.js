@@ -1,5 +1,6 @@
 // Globaler Zustand der Alt-Taste
 var g_IsAltPressed = false;
+var g_warn_debug_messages_ON = false;
 
 if (typeof handleInputAfterGui !== "undefined")
 {
@@ -18,7 +19,8 @@ if (typeof handleInputAfterGui !== "undefined")
 		if (ev.type === "keydown" && ev.keysym)
 		{
 			// KONTROLLINFORMATION: Zeigt bei JEDEM Tastendruck den genauen Code an!
-			warn("[ACCESSIBLE-DEBUG] Taste gedrueckt: sym = " + ev.keysym.sym + " | scancode = " + ev.keysym.scancode);
+			if (g_warn_debug_messages_ON)
+			    {warn("[ACCESSIBLE-DEBUG] Taste gedrueckt: sym = " + ev.keysym.sym + " | scancode = " + ev.keysym.scancode);}
 
 			// 2. Alarm umschalten (Toggle) mit 'ö' (sym=246)
 			if (ev.keysym.sym === 246)
@@ -154,11 +156,11 @@ function triggerAccessibleGather(resourceSpecificType)
     if (closestTree && typeof g_UnitActions !== "undefined" && g_UnitActions["gather"])
     {
         g_UnitActions["gather"].execute(closestTree, { target: closestTree }, selected, false, false);
-        warn("[ACCESSIBLE-DEBUG] Sammelbefehl an Baum ID " + closestTree + " gesendet!");
+        warn("Sammelbefehl an Baum ID " + closestTree + " gesendet!");
     }
     else
     {
-        warn("[ACCESSIBLE-DEBUG] Kein Holzvorkommen im Umkreis gefunden!");
+        warn("Kein Holzvorkommen im Umkreis gefunden!");
     }
 }
 
@@ -215,7 +217,7 @@ var g_IsAlertActive = false;
 function toggleAccessibleAlert()
 {
 	g_IsAlertActive = !g_IsAlertActive;
-	warn("[ACCESSIBLE-DEBUG] Alarm-Status gewechselt auf: " + (g_IsAlertActive ? "ALARM" : "ENTWARNUNG"));
+	if (g_warn_debug_messages_ON) warn("[ACCESSIBLE-DEBUG] Alarm-Status gewechselt auf: " + (g_IsAlertActive ? "ALARM" : "ENTWARNUNG"));
 	triggerAccessibleAlert(g_IsAlertActive);
 }
 
@@ -268,7 +270,7 @@ function triggerAccessibleGather(resourceSpecificType)
 	let selected = g_Selection.toList();
 	if (selected.length === 0)
 	{
-		warn("[ACCESSIBLE-DEBUG] Keine Einheiten ausgewaehlt!");
+		warn("Keine Einheiten ausgewaehlt!");
 		return;
 	}
 
@@ -330,7 +332,7 @@ function triggerAccessibleGather(resourceSpecificType)
 	if (closestTree && typeof g_UnitActions !== "undefined" && g_UnitActions["gather"])
 	{
 		g_UnitActions["gather"].execute(closestTree, { target: closestTree }, selected, false, false);
-		warn("[ACCESSIBLE-DEBUG] Sammelbefehl an ID " + closestTree + " gesendet!");
+		if (g_warn_debug_messages_ON) warn("[ACCESSIBLE-DEBUG] Sammelbefehl an ID " + closestTree + " gesendet!");
 	}
 	else
 	{
@@ -354,17 +356,17 @@ function handleGatherClick()
 	g_GatherClickTimeout = setTimeout(function() {
 		if (g_GatherClickCount === 1)
 		{
-			warn("[ACCESSIBLE-DEBUG] 1x Klick -> Holz sammeln!");
+			warn("1x Klick -> Holz sammeln!");
 			triggerAccessibleGather("tree");
 		}
 		else if (g_GatherClickCount === 2)
 		{
-			warn("[ACCESSIBLE-DEBUG] 2x Klick -> Beeren sammeln!");
+			warn("2x Klick -> Beeren sammeln!");
 			triggerAccessibleGather("fruit");
 		}
 		else if (g_GatherClickCount === 3)
 		{
-			warn("[ACCESSIBLE-DEBUG] 3x Klick -> Fleisch sammeln!");
+			warn("3x Klick -> Fleisch sammeln!");
 			triggerAccessibleGather("meat");
 		}
 
@@ -382,7 +384,7 @@ function triggerAccessibleMove(blockNumber)
 	let selected = g_Selection.toList();
 	if (selected.length === 0)
 	{
-		warn("[ACCESSIBLE-DEBUG] Keine Einheiten ausgewaehlt!");
+		warn("Keine Einheiten ausgewaehlt!");
 		return;
 	}
 
@@ -404,7 +406,7 @@ function triggerAccessibleMove(blockNumber)
 
 	if (count === 0)
 	{
-		warn("[ACCESSIBLE-DEBUG] Position der Einheiten konnte nicht ermittelt werden!");
+		if (g_warn_debug_messages_ON) warn("[ACCESSIBLE-DEBUG] Position der Einheiten konnte nicht ermittelt werden!");
 		return;
 	}
 
@@ -466,7 +468,7 @@ function triggerAccessibleMove(blockNumber)
 			"z": targetZ,
 			"queued": false
 		});
-		warn('[ACCESSIBLE-DEBUG] Relativer Marschbefehl in Richtung ' + blockNumber + ' gesendet! (Laufe ca. 100 Meter)');
+		if (g_warn_debug_messages_ON) warn('[ACCESSIBLE-DEBUG] Relativer Marschbefehl in Richtung ' + blockNumber + ' gesendet! (Laufe ca. 100 Meter)');
 	}
 }
 
@@ -484,12 +486,12 @@ function moveCameraRelative_DEBUG(dx, dz)
 			engineKeys.push(p);
 		}
 	}
-	warn("[ACCESSIBLE-DEBUG] Verfuegbare Engine-Methoden: " + engineKeys.join(" | "));
+	if (g_warn_debug_messages_ON) warn("[ACCESSIBLE-DEBUG] Verfuegbare Engine-Methoden: " + engineKeys.join(" | "));
 
 	// Der eigentliche Versuch (falls die Namen doch stimmen und nur anders aufgerufen werden)
 	if (typeof Engine.GetCameraTarget !== "undefined" && typeof Engine.CameraMoveTo !== "undefined")
 	{
-	    warn("[ACCESSIBLE-DEBUG] Kamera-Rotation: " + JSON.stringify(Engine.GetCameraRotation()));
+	    if (g_warn_debug_messages_ON) warn("[ACCESSIBLE-DEBUG] Kamera-Rotation: " + JSON.stringify(Engine.GetCameraRotation()));
 
 		let target = Engine.GetCameraTarget();
 		if (target)
@@ -497,7 +499,7 @@ function moveCameraRelative_DEBUG(dx, dz)
 			let newX = target.x + dx;
 			let newZ = target.z + dz;
 			Engine.CameraMoveTo(newX, newZ);
-			warn("[ACCESSIBLE-DEBUG] Kamera relativ verschoben auf: (" + Math.round(newX) + ", " + Math.round(newZ) + ")");
+			if (g_warn_debug_messages_ON) warn("[ACCESSIBLE-DEBUG] Kamera relativ verschoben auf: (" + Math.round(newX) + ", " + Math.round(newZ) + ")");
 		}
 	}
 }
@@ -524,7 +526,7 @@ function moveCameraScreenSpace(forward, right)
 			let newX = target.x + dx;
 			let newZ = target.z + dz;
 			Engine.CameraMoveTo(newX, newZ);
-			warn("[ACCESSIBLE-DEBUG] Kamera verschoben auf: (" + Math.round(newX) + ", " + Math.round(newZ) + ")");
+			if (g_warn_debug_messages_ON) warn("[ACCESSIBLE-DEBUG] Kamera verschoben auf: (" + Math.round(newX) + ", " + Math.round(newZ) + ")");
 		}
 	}
 }
