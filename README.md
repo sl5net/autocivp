@@ -304,7 +304,7 @@ and taka a long in your user.cfg
 
 ## Mod autociv compatibility(s)
 The mod is compatible with:
-- 0 A.D 0.0.26 and 0 A.D 0.0.27
+- 0 A.D 0.0.28
 - Should work with all mods that don't have extensive code changes
 
 ## Questions & feedback
