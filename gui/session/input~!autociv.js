@@ -154,8 +154,26 @@ function autociv_placeBuildingByTemplateName(templateName)
 		self.state.index = (self.state.index + 1) % templates.length
 		let templateToSelect = templates[self.state.index]
 
-		let index = g_SelectionPanels.Construction.getItems().
-			findIndex(templatePath => templatePath.endsWith(templateToSelect));
+// gui/session/input~!autociv.js:159
+// ~/.local/share/0ad/mods/autocivp/gui:159
+// alt:
+//		let index = g_SelectionPanels.Construction.getItems().
+//			findIndex(templatePath => templatePath.endsWith(templateToSelect));
+// neu:
+
+//        let index = g_SelectionPanels.Construction.getItems(g_Selection.toList().map(GetEntityState)).
+//                    findIndex(templatePath => templatePath.endsWith(templateToSelect));
+
+
+        let index = g_SelectionPanels.Construction.getItems(g_Selection.toList().map(GetEntityState)).
+                    findIndex(templatePath => {
+                        let pathStr = "";
+                        if (typeof templatePath === "string")
+                            pathStr = templatePath;
+                        else if (templatePath && typeof templatePath === "object")
+                            pathStr = templatePath.template || templatePath.templateName || templatePath.id || "";
+                        return pathStr.endsWith(templateToSelect);
+                    });
 
 		if (index == -1)
 			continue;
