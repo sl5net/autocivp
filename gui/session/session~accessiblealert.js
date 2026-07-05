@@ -1,49 +1,84 @@
-// Wir klinken uns in die globale init-Funktion des Spiels ein.
-if (typeof init !== "undefined")
+// Globaler Zustand der Alt-Taste
+var g_IsAltPressed = false;
+
+if (typeof handleInputAfterGui !== "undefined")
 {
-    let original_init = init;
-    init = function()
-    {
-        original_init();
+	let original_handleInputAfterGui = handleInputAfterGui;
+	handleInputAfterGui = function(ev)
+	{
+		// 1. Verfolge den Zustand der Alt-Taste (sym=1073742050) über keydown und keyup!
+		if (ev.keysym && ev.keysym.sym === 1073742050)
+		{
+			if (ev.type === "keydown")
+				g_IsAltPressed = true;
+			else if (ev.type === "keyup")
+				g_IsAltPressed = false;
+		}
 
-        if (typeof handleInputAfterGui !== "undefined")
-        {
-            let original_handleInputAfterGui = handleInputAfterGui;
-            handleInputAfterGui = function(ev)
-            {
+		if (ev.type === "keydown" && ev.keysym)
+		{
+			// KONTROLLINFORMATION: Zeigt bei JEDEM Tastendruck den genauen Code an!
+			warn("[ACCESSIBLE-DEBUG] Taste gedrueckt: sym = " + ev.keysym.sym + " | scancode = " + ev.keysym.scancode);
+
+			// 2. Alarm umschalten (Toggle) mit 'ö' (sym=246)
+			if (ev.keysym.sym === 246)
+			{
+				toggleAccessibleAlert();
+				return true;
+			}
+
+			// 3. Multi-Tap für Ressourcen (Plustaste sym=43)
+			if (ev.keysym.sym === 43)
+			{
+				handleGatherClick();
+				return true;
+			}
+
+			// 4. Numpad Tasten (1 bis 9) abfangen fuer Marschbefehle!
+			if (ev.keysym.sym >= 1073741913 && ev.keysym.sym <= 1073741921)
+			{
+				let block = ev.keysym.sym - 1073741912;
+				triggerAccessibleMove(block);
+				return true;
+			}
 
 
-                if (ev.type === "keydown" && ev.keysym)
+// 5. Alt (g_IsAltPressed) + Pfeiltasten abfangen fuer grosse Kamera-Spruenge!
+			if (g_IsAltPressed)
+			{
+				// Pfeiltaste Hoch (sym=1073741906) -> Kamera 100m nach OBEN auf dem Bildschirm verschieben
+				if (ev.keysym.sym === 1073741906)
 				{
-                    warn("[ACCESSIBLE-DEBUG] Taste gedrueckt: sym = " + ev.keysym.sym + " | scancode = " + ev.keysym.scancode);
-					// 1. Alarm umschalten (Toggle) mit 'ö' (sym=246)
-					if (ev.keysym.sym === 246)
-					{
-						toggleAccessibleAlert();
-						return true; // Konsumiert die Taste fuer das Spiel
-					}
-					// 2. Multi-Tap für Ressourcen (passen Sie '43' an, falls die Debugger-Zahl anders ist)
-					if (ev.keysym.sym === 43)
-					{
-						handleGatherClick();
-						return true;
-					}
+					moveCameraScreenSpace(100, 0); // vorwaerts = 100, rechts = 0
+					return true;
+				}
+				// Pfeiltaste Runter (sym=1073741905) -> Kamera 100m nach UNTEN verschieben
+				if (ev.keysym.sym === 1073741905)
+				{
+					moveCameraScreenSpace(-100, 0); // vorwaerts = -100, rechts = 0
+					return true;
+				}
+				// Pfeiltaste Rechts (sym=1073741903) -> Kamera 100m nach RECHTS verschieben
+				if (ev.keysym.sym === 1073741903)
+				{
+					moveCameraScreenSpace(0, 100); // vorwaerts = 0, rechts = 100
+					return true;
+				}
+				// Pfeiltaste Left (sym=1073741919 oder evtl. 1073741904) -> Kamera 100m nach LINKS verschieben
+				if (ev.keysym.sym === 1073741904)
+				{
+					moveCameraScreenSpace(0, -100); // vorwaerts = 0, rechts = -100
+					return true;
+				}
+			}
 
-                    // 3. Numpad Tasten (1 bis 9) abfangen fuer Marschbefehle!
-					if (ev.keysym.sym >= 1073741913 && ev.keysym.sym <= 1073741921)
-					{
-						// Berechnet die Blocknummer 1 bis 9 anhand des SDL2-Nummernblocks
-						let block = ev.keysym.sym - 1073741912;
-						triggerAccessibleMove(block);
-						return true;
-					}
 
-                }
-                return original_handleInputAfterGui(ev);
-            };
-        }
-    };
+		}
+		return original_handleInputAfterGui(ev);
+	};
 }
+
+
 
 function triggerAccessibleGather(resourceSpecificType)
 {
@@ -432,5 +467,64 @@ function triggerAccessibleMove(blockNumber)
 			"queued": false
 		});
 		warn('[ACCESSIBLE-DEBUG] Relativer Marschbefehl in Richtung ' + blockNumber + ' gesendet! (Laufe ca. 100 Meter)');
+	}
+}
+
+// =========================================================================
+// DIAGNOSE & KAMERA-NAVIGATION
+// =========================================================================
+function moveCameraRelative_DEBUG(dx, dz)
+{
+	// === DIAGNOSE-BLOCK: Listet alle Kamera- und Get-Methoden von Engine auf ===
+	let engineKeys = [];
+	for (let p in Engine)
+	{
+		if (p.toLowerCase().includes("camera") || p.toLowerCase().includes("get"))
+		{
+			engineKeys.push(p);
+		}
+	}
+	warn("[ACCESSIBLE-DEBUG] Verfuegbare Engine-Methoden: " + engineKeys.join(" | "));
+
+	// Der eigentliche Versuch (falls die Namen doch stimmen und nur anders aufgerufen werden)
+	if (typeof Engine.GetCameraTarget !== "undefined" && typeof Engine.CameraMoveTo !== "undefined")
+	{
+	    warn("[ACCESSIBLE-DEBUG] Kamera-Rotation: " + JSON.stringify(Engine.GetCameraRotation()));
+
+		let target = Engine.GetCameraTarget();
+		if (target)
+		{
+			let newX = target.x + dx;
+			let newZ = target.z + dz;
+			Engine.CameraMoveTo(newX, newZ);
+			warn("[ACCESSIBLE-DEBUG] Kamera relativ verschoben auf: (" + Math.round(newX) + ", " + Math.round(newZ) + ")");
+		}
+	}
+}
+
+
+// =========================================================================
+// KAMERA-NAVIGATION (Vektorberechnung relativ zum Bildschirm-Blickfeld)
+// =========================================================================
+function moveCameraScreenSpace(forward, right)
+{
+	if (typeof Engine.GetCameraPivot !== "undefined" && typeof Engine.CameraMoveTo !== "undefined")
+	{
+		let target = Engine.GetCameraPivot();
+		let rot = typeof Engine.GetCameraRotation !== "undefined" ? Engine.GetCameraRotation() : null;
+
+		if (target)
+		{
+			let yaw = rot ? -rot.y : 0; // Rotationswinkel um die vertikale Achse (in Radian)
+
+			// Mathematische 2D-Rotationsmatrix, um die Richtung auf das Bildschirm-Blickfeld auszurichten!
+			let dx = right * Math.cos(yaw) - forward * Math.sin(yaw);
+			let dz = right * Math.sin(yaw) + forward * Math.cos(yaw);
+
+			let newX = target.x + dx;
+			let newZ = target.z + dz;
+			Engine.CameraMoveTo(newX, newZ);
+			warn("[ACCESSIBLE-DEBUG] Kamera verschoben auf: (" + Math.round(newX) + ", " + Math.round(newZ) + ")");
+		}
 	}
 }
