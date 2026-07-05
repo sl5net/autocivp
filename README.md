@@ -1,5 +1,7 @@
 # ♇ AutoCivP plus some goodies
 
+is mod for https://play0ad.com/ 
+
 Thanks to Nani ([most source is from Nani](https://github.com/nanihadesuka/autociv))
 
 Thanks to all the 0 A.D. players who found it useful.
