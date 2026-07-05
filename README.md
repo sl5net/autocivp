@@ -1,6 +1,6 @@
 # ♇ AutoCivP plus some goodies
 
-is mod for https://play0ad.com/ 
+is mod for https://play0ad.com/download/
 
 Thanks to Nani ([most source is from Nani](https://github.com/nanihadesuka/autociv))
 
