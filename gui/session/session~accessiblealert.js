@@ -28,6 +28,16 @@ if (typeof init !== "undefined")
 						handleGatherClick();
 						return true;
 					}
+
+                    // 3. Numpad Tasten (1 bis 9) abfangen fuer Marschbefehle!
+					if (ev.keysym.sym >= 1073741913 && ev.keysym.sym <= 1073741921)
+					{
+						// Berechnet die Blocknummer 1 bis 9 anhand des SDL2-Nummernblocks
+						let block = ev.keysym.sym - 1073741912;
+						triggerAccessibleMove(block);
+						return true;
+					}
+
                 }
                 return original_handleInputAfterGui(ev);
             };
@@ -326,4 +336,101 @@ function handleGatherClick()
 		g_GatherClickCount = 0;
 		g_GatherClickTimeout = null;
 	}, 350); // 350ms Zeitfenster fuer Mehrfachklicks
+}
+
+
+// =========================================================================
+// NAVIGATIONS-STEUERUNG (Relative Marschbefehle über Numpad 1 bis 9)
+// =========================================================================
+function triggerAccessibleMove(blockNumber)
+{
+	let selected = g_Selection.toList();
+	if (selected.length === 0)
+	{
+		warn("[ACCESSIBLE-DEBUG] Keine Einheiten ausgewaehlt!");
+		return;
+	}
+
+	// 1. Berechne die durchschnittliche aktuelle Position der Arbeiter
+	let totalX = 0;
+	let totalZ = 0;
+	let count = 0;
+
+	for (let entId of selected)
+	{
+		let state = GetEntityState(entId);
+		if (state && state.position)
+		{
+			totalX += state.position.x;
+			totalZ += state.position.z;
+			count++;
+		}
+	}
+
+	if (count === 0)
+	{
+		warn("[ACCESSIBLE-DEBUG] Position der Einheiten konnte nicht ermittelt werden!");
+		return;
+	}
+
+	let avgX = totalX / count;
+	let avgZ = totalZ / count;
+
+	// 2. Definierte Schrittweite in Metern (z. B. 100 Meter weit laufen)
+	let step = 100;
+	let diagStep = step * 0.707; // Hält die Schrittweite auch diagonal konstant bei 100m
+
+	let targetX = avgX;
+	let targetZ = avgZ;
+
+	switch (blockNumber)
+	{
+		case 8: // Norden (Z-Achse erhoehen)
+			targetZ = avgZ + step;
+			break;
+		case 2: // Süden (Z-Achse verringern)
+			targetZ = avgZ - step;
+			break;
+		case 6: // Osten (X-Achse erhoehen)
+			targetX = avgX + step;
+			break;
+		case 4: // Westen (X-Achse verringern)
+			targetX = avgX - step;
+			break;
+		case 9: // Nordost
+			targetX = avgX + diagStep;
+			targetZ = avgZ + diagStep;
+			break;
+		case 7: // Nordwest
+			targetX = avgX - diagStep;
+			targetZ = avgZ + diagStep;
+			break;
+		case 3: // Südost
+			targetX = avgX + diagStep;
+			targetZ = avgZ - diagStep;
+			break;
+		case 1: // Südwest
+			targetX = avgX - diagStep;
+			targetZ = avgZ - diagStep;
+			break;
+		case 5: // Zentrum / Stop (aktuelle Position halten)
+			targetX = avgX;
+			targetZ = avgZ;
+			break;
+		default:
+			return;
+	}
+
+	// 3. Sende den Marschbefehl relativ zur aktuellen Position an die Engine
+	if (typeof Engine.PostNetworkCommand !== "undefined")
+	{
+		Engine.PostNetworkCommand({
+			"type": "walk",
+			"entities": selected,
+			"x": targetX,
+			"z": targetZ,
+			"queued": false
+		});
+		warn('[ACCESSIBLE-DEBUG] Relativer Marschbefehl in Richtung ' + blockNumber + ' gesendet! (Laufe ca. 100 Meter)');
+	}
 }
