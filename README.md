@@ -45,7 +45,7 @@ These features run natively on the user-interface (GUI) side, ensuring complete 
 
 ### Voice Control & SL5 Aura Integration
 
-These shortcuts are mapped to be seamlessly controlled via spoken commands using the SL5 Aura vocal service. You can find the corresponding open-source configurations and voice plugins here:
+These shortcuts are mapped to be seamlessly controlled via spoken commands using the SL5 Aura vocal service. You can find the corresponding open-source configurations and voice plugins Examples here:
 
 * [0 A.D. SL5 Aura Configuration](https://github.com/sl5net/SL5-aura-service/tree/master/config/maps/plugins/game/0ad)
 * [0 A.D. (Secondary Layout) SL5 Aura Configuration](https://github.com/sl5net/SL5-aura-service/tree/master/config/maps/plugins/game/0ad2)
