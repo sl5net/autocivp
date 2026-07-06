@@ -26,6 +26,20 @@ if (typeof handleInputAfterGui !== "undefined")
 			if (ev.keysym.sym === 246)
 			{
 				toggleAccessibleAlert();
+
+              // 2. DIAGNOSE: Kamera-Methoden auslesen
+                var list = [];
+                for (var prop in Engine)
+                {
+                    if (prop.toLowerCase().includes("camera") || prop.toLowerCase().includes("get"))
+                    {
+                        list.push(prop);
+                    }
+                }
+                warn("[ACCESSIBLE-DEBUG] Verfuegbare Engine-Methoden: " + list.join(" | "));
+
+
+
 				return true;
 			}
 
@@ -46,7 +60,7 @@ if (typeof handleInputAfterGui !== "undefined")
 
 
 // 5. Alt (g_IsAltPressed) + Pfeiltasten abfangen fuer grosse Kamera-Spruenge!
-			if (g_IsAltPressed)
+			else if (g_IsAltPressed)
 			{
 				// Pfeiltaste Hoch (sym=1073741906) -> Kamera 100m nach OBEN auf dem Bildschirm verschieben
 				if (ev.keysym.sym === 1073741906)
@@ -74,8 +88,29 @@ if (typeof handleInputAfterGui !== "undefined")
 				}
 			}
 
+            // 6. Strg (ctrl) + Pfeiltasten Hoch/Runter abfangen fuer freien Neigungswinkel!
+            let ctrl = Engine.HotkeyIsPressed("selection.remove"); // Prüft, ob 'Strg' gedrückt ist
+            if (ctrl)
+            {
+                // Pfeiltaste Hoch (sym=1073741906) -> Kamera steiler stellen (nach unten schauen)
+                if (ev.keysym.sym === 1073741906)
+                {
+                    tiltCamera(-0.05);
+                    return true;
+                }
+                // Pfeiltaste Runter (sym=1073741905) -> Kamera flacher stellen (nach vorne schauen)
+                if (ev.keysym.sym === 1073741905)
+                {
+                    tiltCamera(0.05); // Winkel verringern (flacher)
+                    return true;
+                }
+            }
+
 
 		}
+
+
+
 		return original_handleInputAfterGui(ev);
 	};
 }
@@ -527,6 +562,41 @@ function moveCameraScreenSpace(forward, right)
 			let newZ = target.z + dz;
 			Engine.CameraMoveTo(newX, newZ);
 			if (g_warn_debug_messages_ON) warn("[ACCESSIBLE-DEBUG] Kamera verschoben auf: (" + Math.round(newX) + ", " + Math.round(newZ) + ")");
+		}
+	}
+}
+
+// =========================================================================
+// FREIER NEIGUNGSWINKEL (Umgeht C++ Grenzen über SetCameraData)
+// =========================================================================
+
+function tiltCamera(deltaPitch)
+{
+	// Deaktiviert die C++ Kamera-Einschraenkung, damit die Engine den neuen Winkel nicht ueberschreibt! 🛡️
+	if (typeof Engine.GameView_SetConstrainCameraEnabled !== "undefined")
+	{
+		Engine.GameView_SetConstrainCameraEnabled(false);
+	}
+
+	if (typeof Engine.GetCameraPosition !== "undefined" &&
+		typeof Engine.GetCameraRotation !== "undefined" &&
+		typeof Engine.SetCameraData !== "undefined")
+	{
+
+		let pos = Engine.GetCameraPosition();
+		let rot = Engine.GetCameraRotation();
+
+		if (pos && rot)
+		{
+			// Berechne neuen Neigungswinkel (rot.x)
+			let newPitch = rot.x + deltaPitch;
+
+			// Grenzen setzen: nicht flacher als 5 Grad (0.08 Radian) und nicht steiler als 85 Grad (1.48 Radian)
+			if (newPitch < 0.08) newPitch = 0.08;
+			if (newPitch > 1.48) newPitch = 1.48;
+
+			Engine.SetCameraData(pos.x, pos.y, pos.z, newPitch, rot.y, rot.z);
+//			warn("[ACCESSIBLE-DEBUG] Kamera-Neigung angepasst auf: " + Math.round(newPitch * 180 / Math.PI) + " Grad");
 		}
 	}
 }
