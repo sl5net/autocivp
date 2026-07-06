@@ -191,7 +191,7 @@ function triggerAccessibleGather(resourceSpecificType)
     if (closestTree && typeof g_UnitActions !== "undefined" && g_UnitActions["gather"])
     {
         g_UnitActions["gather"].execute(closestTree, { target: closestTree }, selected, false, false);
-        warn("Sammelbefehl an Baum ID " + closestTree + " gesendet!");
+        warn("Sammelbefehl an ID " + closestTree + " gesendet!");
     }
     else
     {
@@ -404,6 +404,16 @@ function handleGatherClick()
 			warn("3x Klick -> Fleisch sammeln!");
 			triggerAccessibleGather("meat");
 		}
+		else if (g_GatherClickCount === 4)
+		{
+			warn("4x Klick -> stone sammeln!");
+			triggerAccessibleGather("stone");
+		}
+//		else if (g_GatherClickCount === 5)
+//		{
+//			warn("3x Klick -> metal sammeln!");
+//			triggerAccessibleGather("metal");
+//		}
 
 		g_GatherClickCount = 0;
 		g_GatherClickTimeout = null;

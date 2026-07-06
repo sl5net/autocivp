@@ -15,9 +15,13 @@ moddata/autociv_0ad_default.cfg
 *@auto
 *.kate-swp
 
+
 # IDE / Editor
 .vscode/
 error_unsolved.txt
+
+.idea/
+.idea/**/*
 
 # Netlify
 .netlify/cache/
