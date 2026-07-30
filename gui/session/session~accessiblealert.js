@@ -1,6 +1,10 @@
-// Globaler Zustand der Alt-Taste
+// gui/session/session~accessiblealert.js:1
 var g_IsAltPressed = false;
 var g_warn_debug_messages_ON = false;
+
+var g_FarmClickCount = 0;
+var g_FarmClickTimeout = null;
+
 
 if (typeof handleInputAfterGui !== "undefined")
 {
@@ -20,7 +24,9 @@ if (typeof handleInputAfterGui !== "undefined")
 		{
 			// KONTROLLINFORMATION: Zeigt bei JEDEM Tastendruck den genauen Code an!
 			if (g_warn_debug_messages_ON)
-			    {warn("[ACCESSIBLE-DEBUG] Taste gedrueckt: sym = " + ev.keysym.sym + " | scancode = " + ev.keysym.scancode);}
+            {
+			    warn("[ACCESSIBLE-DEBUG] Taste gedrueckt: sym = " + ev.keysym.sym + " | scancode = " + ev.keysym.scancode);
+            }
 
 			// 2. Alarm umschalten (Toggle) mit 'ö' (sym=246)
 			if (ev.keysym.sym === 246)
@@ -50,14 +56,32 @@ if (typeof handleInputAfterGui !== "undefined")
 				return true;
 			}
 
-			// 4. Numpad Tasten (1 bis 9) abfangen fuer Marschbefehle!
-			if (ev.keysym.sym >= 1073741913 && ev.keysym.sym <= 1073741921)
+
+			if ("keysym" in ev)
+				warn("DEBUG keysym for key press: " + ev.keysym.sym);
+
+			// Multi-tap handler for farm/field (f key)
+			if (ev.keysym.sym === 102)
 			{
-				let block = ev.keysym.sym - 1073741912;
-				triggerAccessibleMove(block);
+				g_FarmClickCount++;
+				if (g_FarmClickTimeout)
+					clearTimeout(g_FarmClickTimeout);
+				g_FarmClickTimeout = setTimeout(function() {
+					if (g_FarmClickCount === 1)
+					{
+						warn("1x tap -> build field!");
+						autociv_placeBuildingByTemplateName("field");
+					}
+					else if (g_FarmClickCount === 2)
+					{
+						warn("2x tap -> build farm!");
+						autociv_placeBuildingByTemplateName("farmstead");
+					}
+					g_FarmClickCount = 0;
+					g_FarmClickTimeout = null;
+				}, 350);
 				return true;
 			}
-
 
 // 5. Alt (g_IsAltPressed) + Pfeiltasten abfangen fuer grosse Kamera-Spruenge!
 			else if (g_IsAltPressed)
@@ -117,87 +141,6 @@ if (typeof handleInputAfterGui !== "undefined")
 
 
 
-function triggerAccessibleGather(resourceSpecificType)
-{
-    let selected = g_Selection.toList();
-    if (selected.length === 0)
-    {
-        warn("[ACCESSIBLE-DEBUG] Keine Einheiten ausgewaehlt!");
-        return;
-    }
-
-    // 1. Berechne die durchschnittliche Position der ausgewaehlten Arbeiter
-    let totalX = 0;
-    let totalZ = 0;
-    let count = 0;
-
-    for (let entId of selected)
-    {
-        let state = GetEntityState(entId);
-        if (state && state.position)
-        {
-            totalX += state.position.x;
-            totalZ += state.position.z;
-            count++;
-        }
-    }
-
-    if (count === 0)
-    {
-        warn("[ACCESSIBLE-DEBUG] Position der Einheiten konnte nicht ermittelt werden!");
-        return;
-    }
-
-    let avgX = totalX / count;
-    let avgZ = totalZ / count;
-
-    // 2. Finde alle Gaia-Objekte dieser Ressource (Nutzt den bewaehrten GetPlayerEntities-Call von ModernGUI!)
-    let woodEntities = [];
-    const interfaceGaiaEntities = Engine.GuiInterfaceCall("GetPlayerEntities", {"playerID" : 0});
-
-    if (interfaceGaiaEntities)
-    {
-        for (let entityId of interfaceGaiaEntities)
-        {
-            let state = GetEntityState(entityId);
-            if (state && "resourceSupply" in state && "type" in state.resourceSupply && "specific" in state.resourceSupply.type && state.resourceSupply.type.specific === resourceSpecificType)
-            {
-                woodEntities.push(entityId);
-            }
-        }
-    }
-
-    // 3. Finde das naechstgelegene Holzvorkommen
-    let closestTree = undefined;
-    let minDistance = Infinity;
-
-    for (let id of woodEntities)
-    {
-        let targetState = GetEntityState(id);
-        if (targetState && targetState.position && targetState.visibility !== "hidden")
-        {
-            let dx = targetState.position.x - avgX;
-            let dz = targetState.position.z - avgZ;
-            let distance = dx * dx + dz * dz; // Quadrierte Distanz (Satz des Pythagoras)
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                closestTree = id;
-            }
-        }
-    }
-
-    // 4. Sende den Befehl ueber die native GUI-Schnittstelle g_UnitActions
-    if (closestTree && typeof g_UnitActions !== "undefined" && g_UnitActions["gather"])
-    {
-        g_UnitActions["gather"].execute(closestTree, { target: closestTree }, selected, false, false);
-        warn("Sammelbefehl an ID " + closestTree + " gesendet!");
-    }
-    else
-    {
-        warn("Kein Holzvorkommen im Umkreis gefunden!");
-    }
-}
 
 function triggerAccessibleAlert(raise)
 {
@@ -309,6 +252,31 @@ function triggerAccessibleGather(resourceSpecificType)
 		return;
 	}
 
+
+// === DIAGNOSE-BLOCK ZUM BEWEISEN DER RESSOURCEN-NAMEN ===
+	if (selected[0] && GetEntityState(selected[0]) && GetEntityState(selected[0]).position)
+	{
+		let px = GetEntityState(selected[0]).position.x;
+		let pz = GetEntityState(selected[0]).position.z;
+		let gaia = Engine.GuiInterfaceCall("GetPlayerEntities", {"playerID" : 0});
+		if (gaia)
+		{
+			for (let id of gaia)
+			{
+				let s = GetEntityState(id);
+				if (s && s.position && s.resourceSupply)
+				{
+					let dist = (s.position.x - px) * (s.position.x - px) + (s.position.z - pz) * (s.position.z - pz);
+					if (dist < 400) // 20 Meter Umkreis (20 * 20 = 400)
+					{
+//						warn("[ACCESSIBLE-DEBUG] Template: " + s.template + " | ResourceSupply: " + JSON.stringify(s.resourceSupply));
+					}
+				}
+			}
+		}
+	}
+	// ========================================================
+
 	let totalX = 0;
 	let totalZ = 0;
 	let count = 0;
@@ -404,22 +372,39 @@ function handleGatherClick()
 			warn("3x Klick -> Fleisch sammeln!");
 			triggerAccessibleGather("meat");
 		}
+
 		else if (g_GatherClickCount === 4)
 		{
 			warn("4x Klick -> stone sammeln!");
-			triggerAccessibleGather("stone");
+			triggerAccessibleGather("rock");
 		}
-//		else if (g_GatherClickCount === 5)
-//		{
-//			warn("3x Klick -> metal sammeln!");
-//			triggerAccessibleGather("metal");
-//		}
+		else if (g_GatherClickCount === 5)
+		{
+			warn("3x Klick -> metal sammeln!");
+			triggerAccessibleGather("ore");
+		}
+
 
 		g_GatherClickCount = 0;
 		g_GatherClickTimeout = null;
 	}, 350); // 350ms Zeitfenster fuer Mehrfachklicks
 }
 
+
+function handleFarmClick()
+{
+    g_FarmClickCount++;
+    if (g_FarmClickTimeout)
+        clearTimeout(g_FarmClickTimeout);
+    g_FarmClickTimeout = setTimeout(function() {
+        if (g_FarmClickCount === 2)
+        {
+            warn("2x -> Farm buil");
+        }
+        g_FarmClickCount = 0;
+        g_FarmClickTimeout = null;
+    }, 350);
+}
 
 // =========================================================================
 // NAVIGATIONS-STEUERUNG (Relative Marschbefehle über Numpad 1 bis 9)
