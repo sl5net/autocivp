@@ -2,6 +2,11 @@
 var g_IsAltPressed = false;
 var g_warn_debug_messages_ON = false;
 
+
+
+var g_CClickCount = 0;
+var g_CClickTimeout = null;
+
 var g_FarmClickCount = 0;
 var g_FarmClickTimeout = null;
 
@@ -11,7 +16,23 @@ var g_TowerClickTimeout= null;
 var g_AClickCount = 0;
 var g_AClickTimeout= null;
 
+var g_LClickCount = 0;
+var g_LClickTimeout = null;
 
+var g_PClickCount = 0;
+var g_PClickTimeout = null;
+
+var g_RClickCount = 0;
+var g_EClickCount = 0;
+var g_EClickTimeout = null;
+var g_GClickCount = 0;
+var g_GClickTimeout = null;
+
+var g_TClickCount = 0;
+var g_TClickTimeout = null;
+
+var g_WClickCount = 0;
+var g_WClickTimeout = null;
 
 if (typeof handleInputAfterGui !== "undefined")
 {
@@ -50,11 +71,10 @@ if (typeof handleInputAfterGui !== "undefined")
                     }
                 }
                 warn("[ACCESSIBLE-DEBUG] Verfuegbare Engine-Methoden: " + list.join(" | "));
-
-
-
 				return true;
 			}
+
+			let isCtrlPressed = Engine.HotkeyIsPressed("selection.remove");
 
 			// 3. Multi-Tap für Ressourcen (Plustaste sym=43)
 			if (ev.keysym.sym === 43)
@@ -63,8 +83,7 @@ if (typeof handleInputAfterGui !== "undefined")
 				return true;
 			}
 
-
-			if ( !g_IsAltPressed)
+			if (!g_IsAltPressed && !isCtrlPressed)
 			{
 				// Multi-tap handler for A key buildings (a key, keysym 97)
 				if (ev.keysym.sym === 97) {
@@ -134,6 +153,148 @@ if (typeof handleInputAfterGui !== "undefined")
 						}
 						g_FarmClickCount = 0;
 						g_FarmClickTimeout = null;
+					}, 350);
+					return true;
+				}
+				// Multi-tap handler for C key buildings (keysym 99)
+				if (ev.keysym.sym === 99) {
+					g_CClickCount++;
+					if (g_CClickTimeout)
+						clearTimeout(g_CClickTimeout);
+					g_CClickTimeout = setTimeout(function () {
+						if (g_CClickCount === 1)
+							autociv_placeBuildingByTemplateName("crannog");
+						else if (g_CClickCount === 2)
+							autociv_placeBuildingByTemplateName("camp_blemmye");
+						else if (g_CClickCount === 3)
+							autociv_placeBuildingByTemplateName("camp_noba");
+						g_CClickCount = 0;
+						g_CClickTimeout = null;
+					}, 350);
+					return true;
+				}
+				// Multi-tap handler for E key buildings (keysym 101)
+				if (ev.keysym.sym === 101) {
+					g_EClickCount++;
+					if (g_EClickTimeout)
+						clearTimeout(g_EClickTimeout);
+					g_EClickTimeout = setTimeout(function () {
+						if (g_EClickCount === 1)
+							autociv_placeBuildingByTemplateName("embassy");
+						else if (g_EClickCount === 2)
+							autociv_placeBuildingByTemplateName("embassy_celtic");
+						else if (g_EClickCount === 3)
+							autociv_placeBuildingByTemplateName("embassy_iberian");
+						else if (g_EClickCount === 4)
+							autociv_placeBuildingByTemplateName("embassy_italic");
+						g_EClickCount = 0;
+						g_EClickTimeout = null;
+					}, 350);
+					return true;
+				}
+				// Multi-tap handler for G key buildings (keysym 103)
+				if (ev.keysym.sym === 103) {
+					g_GClickCount++;
+					if (g_GClickTimeout)
+						clearTimeout(g_GClickTimeout);
+					g_GClickTimeout = setTimeout(function () {
+						if (g_GClickCount === 1)
+							autociv_placeBuildingByTemplateName("gymnasium");
+						else if (g_GClickCount === 2)
+							autociv_placeBuildingByTemplateName("gerousia");
+						g_GClickCount = 0;
+						g_GClickTimeout = null;
+					}, 350);
+					return true;
+				}
+				// Multi-tap handler for L key buildings (keysym 108)
+				if (ev.keysym.sym === 108) {
+					g_LClickCount++;
+					if (g_LClickTimeout)
+						clearTimeout(g_LClickTimeout);
+					g_LClickTimeout = setTimeout(function () {
+						if (g_LClickCount === 1)
+							autociv_placeBuildingByTemplateName("library");
+						else if (g_LClickCount === 2)
+							autociv_placeBuildingByTemplateName("lighthouse");
+						g_LClickCount = 0;
+						g_LClickTimeout = null;
+					}, 350);
+					return true;
+				}
+				// Multi-tap handler for P key buildings (keysym 112)
+				if (ev.keysym.sym === 112) {
+					g_PClickCount++;
+					if (g_PClickTimeout)
+						clearTimeout(g_PClickTimeout);
+					g_PClickTimeout = setTimeout(function () {
+						if (g_PClickCount === 1)
+							autociv_placeBuildingByTemplateName("palace");
+						else if (g_PClickCount === 2)
+							autociv_placeBuildingByTemplateName("prytaneion");
+						else if (g_PClickCount === 3)
+							autociv_placeBuildingByTemplateName("pillar_ashoka");
+						else if (g_PClickCount === 4)
+							autociv_placeBuildingByTemplateName("pyramid_small");
+						else if (g_PClickCount === 5)
+							autociv_placeBuildingByTemplateName("pyramid_large");
+						g_PClickCount = 0;
+						g_PClickTimeout = null;
+					}, 350);
+					return true;
+				}
+				// Multi-tap handler for R key buildings (keysym 114)
+				if (ev.keysym.sym === 114) {
+					g_RClickCount++;
+					if (g_RClickTimeout)
+						clearTimeout(g_RClickTimeout);
+					g_RClickTimeout = setTimeout(function () {
+						if (g_RClickCount === 1)
+							autociv_placeBuildingByTemplateName("rotarymill");
+						else if (g_RClickCount === 2)
+							autociv_placeBuildingByTemplateName("royal_stoa");
+						else if (g_RClickCount === 3)
+							autociv_placeBuildingByTemplateName("range");
+						g_RClickCount = 0;
+						g_RClickTimeout = null;
+					}, 350);
+					return true;
+				}
+				// Multi-tap handler for T key buildings (keysym 116)
+				if (ev.keysym.sym === 116) {
+					g_TClickCount++;
+					if (g_TClickTimeout)
+						clearTimeout(g_TClickTimeout);
+					g_TClickTimeout = setTimeout(function () {
+						if (g_TClickCount === 1)
+							autociv_placeBuildingByTemplateName("theater");
+						else if (g_TClickCount === 2)
+							autociv_placeBuildingByTemplateName("tophet");
+						else if (g_TClickCount === 3)
+							autociv_placeBuildingByTemplateName("tacara");
+						else if (g_TClickCount === 4)
+							autociv_placeBuildingByTemplateName("tavern");
+						else if (g_TClickCount === 5)
+							autociv_placeBuildingByTemplateName("temple_amun");
+						g_TClickCount = 0;
+						g_TClickTimeout = null;
+					}, 350);
+					return true;
+				}
+				// Multi-tap handler for W key buildings (keysym 119)
+				if (ev.keysym.sym === 119) {
+					g_WClickCount++;
+					if (g_WClickTimeout)
+						clearTimeout(g_WClickTimeout);
+					g_WClickTimeout = setTimeout(function () {
+						if (g_WClickCount === 1)
+							autociv_placeBuildingByTemplateName("warehouse");
+						else if (g_WClickCount === 2)
+							autociv_placeBuildingByTemplateName("wallset_short");
+						else if (g_WClickCount === 3)
+							autociv_placeBuildingByTemplateName("wonder");
+						g_WClickCount = 0;
+						g_WClickTimeout = null;
 					}, 350);
 					return true;
 				}
