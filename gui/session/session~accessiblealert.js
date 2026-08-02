@@ -2,8 +2,6 @@
 var g_IsAltPressed = false;
 var g_warn_debug_messages_ON = false;
 
-
-
 var g_CClickCount = 0;
 var g_CClickTimeout = null;
 
@@ -56,7 +54,7 @@ if (typeof handleInputAfterGui !== "undefined")
 			    warn("[ACCESSIBLE-DEBUG] Taste gedrueckt: sym = " + ev.keysym.sym + " | scancode = " + ev.keysym.scancode);
             }
 
-			// 2. Alarm umschalten (Toggle) mit 'ö' (sym=246)
+			// 2. Alarm  (Toggle) mit 'ö' (sym=246)
 			if (ev.keysym.sym === 246)
 			{
 				toggleAccessibleAlert();
@@ -74,16 +72,16 @@ if (typeof handleInputAfterGui !== "undefined")
 				return true;
 			}
 
-			let isCtrlPressed = Engine.HotkeyIsPressed("selection.remove");
+			// 3. Multi-Tap für Resource (+ sym=43)
 
-			// 3. Multi-Tap für Ressourcen (Plustaste sym=43)
 			if (ev.keysym.sym === 43)
 			{
 				handleGatherClick();
 				return true;
 			}
-
-			if (!g_IsAltPressed && !isCtrlPressed)
+			let isShiftPressed = Engine.HotkeyIsPressed("selection.add");
+			let isCtrlPressed = Engine.HotkeyIsPressed("selection.remove");
+			if (!g_IsAltPressed && !isCtrlPressed && !isShiftPressed)
 			{
 				// Multi-tap handler for A key buildings (a key, keysym 97)
 				if (ev.keysym.sym === 97) {
