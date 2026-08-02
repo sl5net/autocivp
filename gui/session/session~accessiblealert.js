@@ -1,6 +1,6 @@
 // gui/session/session~accessiblealert.js
 var g_IsAltPressed = false;
-var g_warn_debug_messages_ON = true;
+var g_warn_debug_messages_ON = false;
 
 var g_FarmClickCount = 0;
 var g_FarmClickTimeout = null;
@@ -64,102 +64,80 @@ if (typeof handleInputAfterGui !== "undefined")
 			}
 
 
-
-// Multi-tap handler for A key buildings (a key, keysym 97)
-			if (ev.keysym.sym === 97)
+			if ( !g_IsAltPressed)
 			{
-				g_AClickCount++;
-				if (g_AClickTimeout)
-					clearTimeout(g_AClickTimeout);
-				g_AClickTimeout = setTimeout(function() {
-					if (g_AClickCount === 1)
-					{
-						warn("1x tap -> build arsenal!");
-						// autociv_placeBuildingByTemplateName("arsenal");
-						autociv_placeBuildingByTemplateName("structures/{civ}/arsenal");
+				// Multi-tap handler for A key buildings (a key, keysym 97)
+				if (ev.keysym.sym === 97) {
+					g_AClickCount++;
+					if (g_AClickTimeout)
+						clearTimeout(g_AClickTimeout);
+					g_AClickTimeout = setTimeout(function () {
+						if (g_AClickCount === 1) {
+							warn("1x tap -> build arsenal!");
+							// autociv_placeBuildingByTemplateName("arsenal");
+							autociv_placeBuildingByTemplateName("structures/{civ}/arsenal");
 
-					}
-					else if (g_AClickCount === 2)
-					{
-						warn("2x tap -> build army_camp!");
-						autociv_placeBuildingByTemplateName("army_camp");
-					}
-					else if (g_AClickCount === 3)
-					{
-						warn("3x tap -> build assembly!");
-						autociv_placeBuildingByTemplateName("assembly");
-					}
-					else if (g_AClickCount === 4)
-					{
-						warn("4x tap -> build amphitheater_pompeii!");
-						autociv_placeBuildingByTemplateName("amphitheater_pompeii");
-					}
-					else if (g_AClickCount === 5)
-					{
-						warn("5x tap -> build arch!");
-						autociv_placeBuildingByTemplateName("arch");
-					}
-					g_AClickCount = 0;
-					g_AClickTimeout = null;
-				}, 350);
-				return true;
+						} else if (g_AClickCount === 2) {
+							warn("2x tap -> build army_camp!");
+							autociv_placeBuildingByTemplateName("army_camp");
+						} else if (g_AClickCount === 3) {
+							warn("3x tap -> build assembly!");
+							autociv_placeBuildingByTemplateName("assembly");
+						} else if (g_AClickCount === 4) {
+							warn("4x tap -> build amphitheater_pompeii!");
+							autociv_placeBuildingByTemplateName("amphitheater_pompeii");
+						} else if (g_AClickCount === 5) {
+							warn("5x tap -> build arch!");
+							autociv_placeBuildingByTemplateName("arch");
+						}
+						g_AClickCount = 0;
+						g_AClickTimeout = null;
+					}, 350);
+					return true;
+				}
+
+
+				// Multi-tap handler for defense tower (d key, keysym 100)
+				if (ev.keysym.sym === 100) {
+					g_TowerClickCount++;
+					if (g_TowerClickTimeout)
+						clearTimeout(g_TowerClickTimeout);
+					g_TowerClickTimeout = setTimeout(function () {
+						if (g_TowerClickCount === 1) {
+							warn("1x tap -> build sentry tower!");
+							autociv_placeBuildingByTemplateName("sentry_tower");
+						} else if (g_TowerClickCount === 2) {
+							warn("2x tap -> build defense tower!");
+							autociv_placeBuildingByTemplateName("defense_tower");
+						}
+						g_TowerClickCount = 0;
+						g_TowerClickTimeout = null;
+					}, 350);
+					return true;
+				}
+
+				// Multi-tap handler for farm/field (f key)
+				if (ev.keysym.sym === 102) {
+					g_FarmClickCount++;
+					if (g_FarmClickTimeout)
+						clearTimeout(g_FarmClickTimeout);
+					g_FarmClickTimeout = setTimeout(function () {
+						if (g_FarmClickCount === 1) {
+							warn("1x tap -> build field!");
+							autociv_placeBuildingByTemplateName("field");
+						} else if (g_FarmClickCount === 2) {
+							warn("2x tap -> build farm!");
+							autociv_placeBuildingByTemplateName("farmstead");
+						} else if (g_FarmClickCount === 3) {
+							warn("3x tap -> build fortress!");
+							autociv_placeBuildingByTemplateName("fortress");
+						}
+						g_FarmClickCount = 0;
+						g_FarmClickTimeout = null;
+					}, 350);
+					return true;
+				}
 			}
-
-
-
-
-
-			// Multi-tap handler for defense tower (d key, keysym 100)
-			if (ev.keysym.sym === 100)
-			{
-				g_TowerClickCount++;
-				if (g_TowerClickTimeout)
-					clearTimeout(g_TowerClickTimeout);
-				g_TowerClickTimeout = setTimeout(function() {
-					if (g_TowerClickCount === 1)
-					{
-						warn("1x tap -> build sentry tower!");
-						autociv_placeBuildingByTemplateName("sentry_tower");
-					}
-					else if (g_TowerClickCount === 2)
-					{
-						warn("2x tap -> build defense tower!");
-						autociv_placeBuildingByTemplateName("defense_tower");
-					}
-					g_TowerClickCount = 0;
-					g_TowerClickTimeout = null;
-				}, 350);
-				return true;
-			}
-
-			// Multi-tap handler for farm/field (f key)
-			if (ev.keysym.sym === 102)
-			{
-				g_FarmClickCount++;
-				if (g_FarmClickTimeout)
-					clearTimeout(g_FarmClickTimeout);
-				g_FarmClickTimeout = setTimeout(function() {
-					if (g_FarmClickCount === 1)
-					{
-						warn("1x tap -> build field!");
-						autociv_placeBuildingByTemplateName("field");
-					}
-					else if (g_FarmClickCount === 2)
-					{
-						warn("2x tap -> build farm!");
-						autociv_placeBuildingByTemplateName("farmstead");
-					}
-					else if (g_FarmClickCount === 3)
-					{
-						warn("3x tap -> build fortress!");
-						autociv_placeBuildingByTemplateName("fortress");
-					}
-					g_FarmClickCount = 0;
-					g_FarmClickTimeout = null;
-				}, 350);
-				return true;
-			}
-
 			// Numpad 1 to 9 directional unit movement (keysyms 1073741913 to 1073741921)
 			if (ev.keysym && ev.keysym.sym >= 1073741913 && ev.keysym.sym <= 1073741921)
 			{
