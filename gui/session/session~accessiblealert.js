@@ -1,4 +1,5 @@
 // gui/session/session~accessiblealert.js
+
 var g_IsAltPressed = false;
 var g_warn_debug_messages_ON = false;
 
@@ -21,8 +22,11 @@ var g_PClickCount = 0;
 var g_PClickTimeout = null;
 
 var g_RClickCount = 0;
+var g_RClickTimeout = 0;
+
 var g_EClickCount = 0;
 var g_EClickTimeout = null;
+
 var g_GClickCount = 0;
 var g_GClickTimeout = null;
 
