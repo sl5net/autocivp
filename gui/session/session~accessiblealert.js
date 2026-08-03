@@ -95,8 +95,8 @@ if (typeof handleInputAfterGui !== "undefined")
 					g_AClickTimeout = setTimeout(function () {
 						if (g_AClickCount === 1) {
 							warn("1x tap -> build arsenal!");
-							// autociv_placeBuildingByTemplateName("arsenal");
-							autociv_placeBuildingByTemplateName("structures/{civ}/arsenal");
+							autociv_placeBuildingByTemplateName("arsenal");
+							// autociv_placeBuildingByTemplateName("structures/{civ}/arsenal");
 
 						} else if (g_AClickCount === 2) {
 							warn("2x tap -> build army_camp!");
