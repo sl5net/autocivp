@@ -1,7 +1,8 @@
 // gui/session/session~accessiblealert.js
 
-var g_IsAltPressed = false;
 var g_warn_debug_messages_ON = false;
+
+var g_IsAltPressed = false;
 
 var g_CClickCount = 0;
 var g_CClickTimeout = null;
@@ -116,6 +117,8 @@ if (typeof handleInputAfterGui !== "undefined")
 					}, 350);
 					return true;
 				}
+
+
 
 
 				// Multi-tap handler for defense tower (d key, keysym 100)
@@ -268,15 +271,18 @@ if (typeof handleInputAfterGui !== "undefined")
 					if (g_TClickTimeout)
 						clearTimeout(g_TClickTimeout);
 					g_TClickTimeout = setTimeout(function () {
-						if (g_TClickCount === 1)
-							autociv_placeBuildingByTemplateName("theater");
-						else if (g_TClickCount === 2)
-							autociv_placeBuildingByTemplateName("tophet");
-						else if (g_TClickCount === 3)
-							autociv_placeBuildingByTemplateName("tacara");
-						else if (g_TClickCount === 4)
-							autociv_placeBuildingByTemplateName("tavern");
-						else if (g_TClickCount === 5)
+if (g_TClickCount === 1)
+    autociv_placeBuildingByTemplateName("temple");
+else if (g_TClickCount === 2)
+    autociv_placeBuildingByTemplateName("theater");
+else if (g_TClickCount === 3)
+    autociv_placeBuildingByTemplateName("tophet");
+else if (g_TClickCount === 4)
+    autociv_placeBuildingByTemplateName("tacara");
+else if (g_TClickCount === 5)
+    autociv_placeBuildingByTemplateName("tavern");
+
+						else if (g_TClickCount === 6)
 							autociv_placeBuildingByTemplateName("temple_amun");
 						g_TClickCount = 0;
 						g_TClickTimeout = null;
