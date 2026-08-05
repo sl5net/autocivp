@@ -270,24 +270,30 @@ if (typeof handleInputAfterGui !== "undefined")
 					g_TClickCount++;
 					if (g_TClickTimeout)
 						clearTimeout(g_TClickTimeout);
-					g_TClickTimeout = setTimeout(function () {
-if (g_TClickCount === 1)
-    autociv_placeBuildingByTemplateName("temple");
-else if (g_TClickCount === 2)
-    autociv_placeBuildingByTemplateName("theater");
-else if (g_TClickCount === 3)
-    autociv_placeBuildingByTemplateName("tophet");
-else if (g_TClickCount === 4)
-    autociv_placeBuildingByTemplateName("tacara");
-else if (g_TClickCount === 5)
-    autociv_placeBuildingByTemplateName("tavern");
+						g_TClickTimeout = setTimeout(function () {
+							let idNr=1
+							if(false){}
+							else if (g_TClickCount === idNr++)
+								autociv_placeBuildingByTemplateName("sentry_tower");
+							else if (g_TClickCount === idNr++)
+								autociv_placeBuildingByTemplateName("defense_tower");
+							else if (g_TClickCount === idNr++)
+								autociv_placeBuildingByTemplateName("temple");
+							else if (g_TClickCount === idNr++)
+								autociv_placeBuildingByTemplateName("temple");
+							else if (g_TClickCount === idNr++)
+								autociv_placeBuildingByTemplateName("theater");
+							else if (g_TClickCount === idNr++)
+								autociv_placeBuildingByTemplateName("tophet");
+							else if (g_TClickCount === idNr++)
+								autociv_placeBuildingByTemplateName("tacara");
+							else if (g_TClickCount === idNr++)
+								autociv_placeBuildingByTemplateName("tavern");
 
-						else if (g_TClickCount === 6)
-							autociv_placeBuildingByTemplateName("temple_amun");
-						g_TClickCount = 0;
-						g_TClickTimeout = null;
-					}, 350);
-					return true;
+							g_TClickCount = 0;
+							g_TClickTimeout = null;
+						}, 350);
+						return true;
 				}
 				// Multi-tap handler for W key buildings (keysym 119)
 				if (ev.keysym.sym === 119) {
