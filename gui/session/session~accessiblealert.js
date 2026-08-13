@@ -9,7 +9,7 @@
 // import { moveCameraScreenSpace } from "./moveCameraScreenSpace.js";
 // import { tiltCamera } from "./tiltCamera.js";
 
-var g_warn_debug_messages_ON = false;
+var g_warn_debug_messages_ON = true;
 
 var g_IsAltPressed = false;
 
@@ -301,6 +301,26 @@ if (typeof handleInputAfterGui !== "undefined")
 					}, 350);
 					return true;
 				}
+
+
+				// Multi-tap handler for h key buildings (keysym 119)
+				if (ev.keysym.sym === 104) {
+					g_WClickCount++;
+					if (g_WClickTimeout)
+						clearTimeout(g_WClickTimeout);
+					g_WClickTimeout = setTimeout(function () {
+						if (g_WClickCount === 1)
+							autociv_placeBuildingByTemplateName("hause");
+						else if (g_WClickCount === 2)
+							autociv_placeBuildingByTemplateName("dock");
+						g_WClickCount = 0;
+						g_WClickTimeout = null;
+					}, 350);
+					return true;
+				}
+				// "hotkey.autociv.session.building.place.dock": "Space+J",
+
+
 			}
 			// Numpad 1 to 9 directional unit movement (keysyms 1073741913 to 1073741921)
 			if (ev.keysym && ev.keysym.sym >= 1073741913 && ev.keysym.sym <= 1073741921)
