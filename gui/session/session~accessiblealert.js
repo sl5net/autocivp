@@ -9,10 +9,17 @@
 // import { moveCameraScreenSpace } from "./moveCameraScreenSpace.js";
 // import { tiltCamera } from "./tiltCamera.js";
 
-var g_warn_debug_messages_ON = 1;
+const AUTOCIV_ACCESSIBLE_SCRIPT_VERSION = "2026-08-15-v7";
+warn("[ACCESSIBLE-DEBUG] session~accessiblealert.js VERSION: " + AUTOCIV_ACCESSIBLE_SCRIPT_VERSION);
+
+var g_warn_debug_messages_ON = false;
 var g_IsAltPressed = false;
 var g_IsCtrlPressed = false;
+var isCtrlPressed = false;
+var isShiftPressed = false;
 var g_CtrlAltSelectAllFired = false;
+
+
 
 var g_FarmClickCount = 0;
 var g_FarmClickTimeout = null;
@@ -21,7 +28,7 @@ var g_IsAlertActive = false;
 var g_BuildingKeyMap = {
 	97: ["arsenal", "army_camp", "assembly", "amphitheater_pompeii", "arch"],
 	98: ["barracks"],
-	99: ["crannog", "camp_blemmye", "camp_noba"],
+	99: ["civil_centre", "crannog", "camp_blemmye", "camp_noba"],
 	100: ["defense_tower","dock"],
 	101: ["embassy", "embassy_celtic", "embassy_iberian", "embassy_italic"],
 	102: ["field", "farmstead", "fortress"],
@@ -47,6 +54,133 @@ var g_BuildingKeyMap = {
 	// 122: ["z"],
 };
 var g_KeyTapState = {};
+
+
+
+// --- Auto-derived Alt+Letter (units) / Ctrl+Letter (buildings) selection ---
+const AUTOCIV_CONFIG_FILES = [
+	"moddata/autocivP_default_config.json"   // highest priority, applied last
+];
+const CLASS_SELECT_PREFIX = "hotkey.autociv.session.entity.by.class.select.";
+
+function autociv_loadMergedConfig()
+{
+	let merged = {};
+	for (const path of AUTOCIV_CONFIG_FILES)
+	{
+		let data;
+		try { data = Engine.ReadJSONFile(path); }
+		catch (e) {
+			if (g_warn_debug_messages_ON)
+				warn("[ACCESSIBLE-DEBUG] Could not read " + path + ": " + e);
+			continue;
+		}
+		if (!data) continue;
+		for (let key in data)
+			merged[key] = data[key]; // later files override earlier ones
+	}
+	return merged;
+}
+
+function autociv_firstLetter(expr)
+{
+	const m = expr.match(/[A-Za-z]/);
+	return m ? m[0].toUpperCase() : null;
+}
+
+// Flat list of all building template names already known from g_BuildingKeyMap,
+// used to filter building-classes out of the unit (Alt+Letter) map.
+function autociv_flattenBuildingNames()
+{
+	let names = [];
+	for (let sym in g_BuildingKeyMap)
+		names.push(...g_BuildingKeyMap[sym]);
+	return names.map(n => n.replace(/_/g, "").toLowerCase());
+}
+
+function autociv_parseCombo(str)
+{
+	if (!str) return null;
+	const parts = str.split("+").map(s => s.trim().toUpperCase()).filter(s => s.length);
+	return parts.length ? parts : null;
+}
+
+function autociv_isExplicitAltLetter(parts)
+{
+	// exactly ["ALT", <single letter>]
+	if (!parts || parts.length !== 2 || !parts.includes("ALT")) return null;
+	const other = parts.find(p => p !== "ALT");
+	return (other && other.length === 1 && /[A-Z]/.test(other)) ? other : null;
+}
+
+
+const AUTOCIV_GENERIC_QUALIFIERS = ["Support"];
+
+function autociv_anchorLetter(expr)
+{
+	const tokens = expr.match(/[A-Za-z]+/g) || [];
+	for (const t of tokens)
+		if (!AUTOCIV_GENERIC_QUALIFIERS.includes(t))
+			return t[0].toUpperCase();
+	return tokens.length ? tokens[0][0].toUpperCase() : null;
+}
+
+function autociv_buildUnitClassMap(mergedConfig)
+{
+	let byLetter = {};
+	let explicitlyClaimed = new Set();
+	let fallbackCandidates = [];
+
+	for (let key in mergedConfig)
+	{
+		if (!key.startsWith(CLASS_SELECT_PREFIX)) continue;
+		const expr = key.slice(CLASS_SELECT_PREFIX.length);
+		if (expr.includes(".by.group.")) continue;
+		const explicitLetter = autociv_isExplicitAltLetter(autociv_parseCombo(mergedConfig[key]));
+		if (explicitLetter)
+		{
+			if (!byLetter[explicitLetter]) byLetter[explicitLetter] = new Set();
+			byLetter[explicitLetter].add(expr);
+			explicitlyClaimed.add(explicitLetter);
+		}
+		else
+		{
+			fallbackCandidates.push(expr);
+		}
+	}
+
+	for (const expr of fallbackCandidates)
+	{
+		const letter = autociv_anchorLetter(expr);
+		if (!letter || explicitlyClaimed.has(letter)) continue;
+		if (!byLetter[letter]) byLetter[letter] = new Set();
+		byLetter[letter].add(expr);
+	}
+
+	let result = {};
+	for (let letter in byLetter)
+		result[letter] = [...byLetter[letter]].map(e => "(" + e + ")").join("|");
+	if (g_warn_debug_messages_ON)
+		warn("[ACCESSIBLE-DEBUG] Unit class map: " + JSON.stringify(result));
+	return result;
+}
+
+var g_UnitClassSelectMap = autociv_buildUnitClassMap(autociv_loadMergedConfig());
+
+// Select all currently existing buildings whose template starts with `letter`
+function autociv_selectBuildingsByLetter(letter)
+{
+	const sym = letter.toLowerCase().charCodeAt(0);
+	const templates = g_BuildingKeyMap[sym];
+	if (!templates) return;
+	let merged = [];
+	for (const t of templates)
+		merged.push(...Engine.GuiInterfaceCall("autociv_FindEntitiesWithTemplateName", t));
+	autociv_select.fromList(merged, true, false);
+}
+
+
+
 
 if (typeof handleInputAfterGui !== "undefined")
 {
@@ -75,9 +209,14 @@ if (typeof handleInputAfterGui !== "undefined")
 		if (ev.type === "keydown" && g_IsAltPressed && g_IsCtrlPressed && !g_CtrlAltSelectAllFired)
 		{
 			g_CtrlAltSelectAllFired = true;
+			// if (g_warn_debug_messages_ON)
+			// 	warn("[ACCESSIBLE-DEBUG] Ctrl+Alt -> select all units");
+			// autociv_select.entityWithClassesExpression("Unit", true, false);
+
 			if (g_warn_debug_messages_ON)
-				warn("[ACCESSIBLE-DEBUG] Ctrl+Alt -> select all units");
-			autociv_select.entityWithClassesExpression("Unit", true, false);
+				warn("[ACCESSIBLE-DEBUG] Ctrl+Alt -> select attack units");
+			autociv_select.entityWithClassesExpression("(Support|Soldier|Cavalry|Siege|Dog)&!Ship", true, false);
+
 			return true;
 		}
 		if (ev.type === "keyup" && (!g_IsAltPressed || !g_IsCtrlPressed))
@@ -87,8 +226,34 @@ if (typeof handleInputAfterGui !== "undefined")
 
 
 
-
-
+/// Alt+Letter -> select units by class (auto-derived from config)
+			if (ev.keysym && g_IsAltPressed &&				!Engine.HotkeyIsPressed("selection.remove") &&
+				!Engine.HotkeyIsPressed("selection.add") &&
+				ev.keysym.sym >= 97 && ev.keysym.sym <= 122)
+			{
+				let letter = String.fromCharCode(ev.keysym.sym).toUpperCase();
+				if (g_UnitClassSelectMap[letter])
+				{
+					if (g_warn_debug_messages_ON)
+						warn("[ACCESSIBLE-DEBUG] Alt+" + letter + " -> select: " + g_UnitClassSelectMap[letter]);
+					autociv_select.entityWithClassesExpression(g_UnitClassSelectMap[letter], true, false);
+					return true;
+				}
+			}
+			// Ctrl+Letter -> select existing buildings by first letter
+			if (Engine.HotkeyIsPressed("selection.remove") && !g_IsAltPressed &&
+				!Engine.HotkeyIsPressed("selection.add") &&
+				ev.keysym.sym >= 97 && ev.keysym.sym <= 122)
+			{
+				let letter = String.fromCharCode(ev.keysym.sym).toUpperCase();
+				if (g_BuildingKeyMap[ev.keysym.sym])
+				{
+					if (g_warn_debug_messages_ON)
+						warn("[ACCESSIBLE-DEBUG] Ctrl+" + letter + " -> select buildings: " + g_BuildingKeyMap[ev.keysym.sym].join(","));
+					autociv_selectBuildingsByLetter(letter);
+					return true;
+				}
+			}
 
 
 
