@@ -44,7 +44,7 @@ var g_BuildingKeyMap = {
 	112: ["palace", "prytaneion", "pillar_ashoka", "pyramid_small", "pyramid_large"],
 	// 113: ["q"],
 	114: ["rotarymill", "royal_stoa", "range"],
-	115: ["storehouse", "shrine", "super_dock", "syssiton"],
+	115: ["storehouse", "stable", "shrine", "super_dock", "syssiton"],
 	116: ["sentry_tower", "defense_tower", "temple", "theater", "tophet", "tacara", "tavern"],
 	// 117: ["uuuuu"],
 	// 118: ["vvvv"],
