@@ -1,3 +1,5 @@
+
+
 // gui/session/session~accessiblealert.js
 // import { toggleAccessibleAlert } from "./toggleAccessibleAlert.js";
 // import { triggerAccessibleAlert } from "./triggerAccessibleAlert.js";
@@ -15,8 +17,6 @@ warn("[ACCESSIBLE-DEBUG] session~accessiblealert.js VERSION: " + AUTOCIV_ACCESSI
 var g_warn_debug_messages_ON = false;
 var g_IsAltPressed = false;
 var g_IsCtrlPressed = false;
-var isCtrlPressed = false;
-var isShiftPressed = false;
 var g_CtrlAltSelectAllFired = false;
 
 
@@ -187,6 +187,7 @@ if (typeof handleInputAfterGui !== "undefined")
 	let original_handleInputAfterGui = handleInputAfterGui;
 	handleInputAfterGui = function(ev)
 	{
+
 		// 1. follow Alt-key (sym=1073742050) keydown and keyup
 		if (ev.keysym && ev.keysym.sym === 1073742050)
 		{
@@ -241,7 +242,7 @@ if (typeof handleInputAfterGui !== "undefined")
 				}
 			}
 			// Ctrl+Letter -> select existing buildings by first letter
-			if (Engine.HotkeyIsPressed("selection.remove") && !g_IsAltPressed &&
+			if (ev && ev.keysym && Engine.HotkeyIsPressed("selection.remove") && !g_IsAltPressed &&
 				!Engine.HotkeyIsPressed("selection.add") &&
 				ev.keysym.sym >= 97 && ev.keysym.sym <= 122)
 			{
