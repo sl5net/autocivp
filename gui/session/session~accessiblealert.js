@@ -9,25 +9,42 @@
 // import { moveCameraScreenSpace } from "./moveCameraScreenSpace.js";
 // import { tiltCamera } from "./tiltCamera.js";
 
-var g_warn_debug_messages_ON = false;
+var g_warn_debug_messages_ON = 1;
 var g_IsAltPressed = false;
+var g_IsCtrlPressed = false;
+var g_CtrlAltSelectAllFired = false;
+
 var g_FarmClickCount = 0;
 var g_FarmClickTimeout = null;
 var g_IsAlertActive = false;
 
 var g_BuildingKeyMap = {
 	97: ["arsenal", "army_camp", "assembly", "amphitheater_pompeii", "arch"],
+	98: ["barracks"],
 	99: ["crannog", "camp_blemmye", "camp_noba"],
+	100: ["defense_tower","dock"],
 	101: ["embassy", "embassy_celtic", "embassy_iberian", "embassy_italic"],
 	102: ["field", "farmstead", "fortress"],
 	103: ["gymnasium", "gerousia"],
 	104: ["house", "dock"],
+	105: ["inn"],
+	// 106: ["jjjjj"],
+	// 107: ["kkkkk"],
 	108: ["library", "lighthouse"],
+	109: ["market", "mercenary_camp", "military_colony", "monument"],
+	// 110: ["nnnnnnnn"],
+	111: ["outpost"],
 	112: ["palace", "prytaneion", "pillar_ashoka", "pyramid_small", "pyramid_large"],
+	// 113: ["q"],
 	114: ["rotarymill", "royal_stoa", "range"],
 	115: ["storehouse", "shrine", "super_dock", "syssiton"],
 	116: ["sentry_tower", "defense_tower", "temple", "theater", "tophet", "tacara", "tavern"],
-	119: ["warehouse", "wallset_short", "wonder"]
+	// 117: ["uuuuu"],
+	// 118: ["vvvv"],
+	119: ["warehouse", "wallset_short", "wallset_palisade", "wallset_siege", "wallset_stone", "wonder"]
+	// 120: ["x"],
+	// 121: ["y"],
+	// 122: ["z"],
 };
 var g_KeyTapState = {};
 
@@ -44,6 +61,38 @@ if (typeof handleInputAfterGui !== "undefined")
 			else if (ev.type === "keyup")
 				g_IsAltPressed = false;
 		}
+
+
+		// 1b. follow Ctrl-key (Left=1073742048, Right=1073742052) keydown and keyup
+		if (ev.keysym && (ev.keysym.sym === 1073742048 || ev.keysym.sym === 1073742052))
+		{
+			if (ev.type === "keydown")
+				g_IsCtrlPressed = true;
+			else if (ev.type === "keyup")
+				g_IsCtrlPressed = false;
+		}
+		// 1c. Ctrl+Alt chord -> select all units
+		if (ev.type === "keydown" && g_IsAltPressed && g_IsCtrlPressed && !g_CtrlAltSelectAllFired)
+		{
+			g_CtrlAltSelectAllFired = true;
+			if (g_warn_debug_messages_ON)
+				warn("[ACCESSIBLE-DEBUG] Ctrl+Alt -> select all units");
+			autociv_select.entityWithClassesExpression("Unit", true, false);
+			return true;
+		}
+		if (ev.type === "keyup" && (!g_IsAltPressed || !g_IsCtrlPressed))
+			g_CtrlAltSelectAllFired = false;
+
+
+
+
+
+
+
+
+
+
+
 
 		if (ev.type === "keydown" && ev.keysym)
 		{
